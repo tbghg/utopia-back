@@ -4,8 +4,10 @@ import (
 	mysqlCfg "github.com/go-sql-driver/mysql"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	gormLogger "gorm.io/gorm/logger"
 	"time"
 	"utopia-back/config"
+	"utopia-back/pkg/logger"
 )
 
 var DB *gorm.DB
@@ -25,7 +27,9 @@ func Init() error {
 	}
 
 	// 连接数据库
-	db, err := gorm.Open(mysql.Open(cfg.FormatDSN()), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(cfg.FormatDSN()), &gorm.Config{
+		Logger: logger.NewGormLogger(logger.Logger, gormLogger.Info),
+	})
 	if err != nil {
 		return err
 	}
