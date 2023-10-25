@@ -1,0 +1,1 @@
+{"level":"DEBUG","time":"2023-10-25T13:22:15.203+0800","caller":"gin@v1.9.1/context.go:174","message":"HTTP Access Log","status":200,"request":"POST /api/v1/testUser/add?name=214&age=12412","query":"name=214&age=12412","ip":"::1","user-agent":"PostmanRuntime/7.33.0","errors":"","time":"0s","Request Body":"","Response Body":""}
