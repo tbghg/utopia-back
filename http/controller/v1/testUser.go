@@ -7,19 +7,19 @@ import (
 	"utopia-back/service"
 )
 
-type TestUserCtrl struct {
+type TestUserController struct {
 	Service *service.TestUserService
 }
 
-func NewTestUserCtrl() *TestUserCtrl {
-	return &TestUserCtrl{
+func NewTestUserCtrl() *TestUserController {
+	return &TestUserController{
 		Service: &service.TestUserService{
 			Dal: &implement.TestUserImpl{},
 		},
 	}
 }
 
-func (t *TestUserCtrl) Add(c *gin.Context) {
+func (t *TestUserController) Add(c *gin.Context) {
 	name := c.PostForm("name")
 	age := c.PostForm("age")
 	ageInt, err := strconv.Atoi(age)
@@ -34,7 +34,7 @@ func (t *TestUserCtrl) Add(c *gin.Context) {
 	c.JSON(200, gin.H{"id": id})
 }
 
-func (t *TestUserCtrl) Select(c *gin.Context) {
+func (t *TestUserController) Select(c *gin.Context) {
 	id := c.Param("id")
 	idInt, err := strconv.Atoi(id)
 	if err != nil {

@@ -10,4 +10,5 @@ func InitDB() {
 	database.Init()
 	// 初始化数据表
 	database.DB.AutoMigrate(&model.TestUser{})
+	database.DB.AutoMigrate(&model.User{})
 }
