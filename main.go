@@ -10,6 +10,9 @@ func main() {
 	initialize.InitLogger()
 	// 初始化数据库
 	initialize.InitDB()
+	// 初始化redis
+	initialize.InitRedis()
+
 	// 初始化配置
 	r := gin.New()
 	initialize.InitRoute(r)
