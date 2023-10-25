@@ -30,8 +30,8 @@ func (u *UserService) Login(username string, password string) (token string, id 
 	}
 	// 检查密码是否正确
 	if utils.ValidMd5EncodeWithSalt(password, user.Salt, user.Password) {
-		// todo 生成token
-		return "token", user.ID, nil
+		//  生成token
+		return utils.GenToken(int(id)), user.ID, nil
 	}
 	return "", 0, ErrorPasswordWrong
 }
@@ -56,6 +56,7 @@ func (u *UserService) Register(username string, password string) (token string, 
 	if err != nil {
 		return "", 0, err
 	}
-	// todo 生成token
-	return "token", id, err
+	// 生成token
+	return utils.GenToken(int(id)), user.ID, nil
+
 }

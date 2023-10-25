@@ -38,6 +38,7 @@ func (u *UserController) Login(c *gin.Context) {
 		c.JSON(200, gin.H{"message": err.Error()})
 		return
 	}
+
 	c.JSON(200, gin.H{"token": token, "id": id})
 }
 

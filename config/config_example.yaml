@@ -13,3 +13,7 @@ log:
   max_age: 7
   compress: false
   level: debug
+jwt:
+  secret: "secret"
+  issuer: "issuer"
+  expire: 360
