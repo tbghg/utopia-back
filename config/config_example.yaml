@@ -1,0 +1,15 @@
+mysql:
+  addr: "localhost:3305"
+  password: password
+  user: user
+  dbname: dbname
+redis:
+  addr: "localhost:6379"
+  password: "password"
+  db: 0
+log:
+  max_size: 100
+  max_backups: 7
+  max_age: 7
+  compress: false
+  level: debug
