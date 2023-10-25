@@ -8,7 +8,8 @@ import (
 func main() {
 	// 初始化日志
 	initialize.InitLogger()
-
+	// 初始化数据库
+	initialize.InitDB()
 	// 初始化配置
 	r := gin.New()
 	initialize.InitRoute(r)
