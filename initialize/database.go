@@ -7,8 +7,12 @@ import (
 
 func InitDB() {
 	// 初始化数据库
-	database.Init()
+	_ = database.Init()
 	// 初始化数据表
-	database.DB.AutoMigrate(&model.TestUser{})
-	database.DB.AutoMigrate(&model.User{})
+	_ = database.DB.AutoMigrate(&model.TestUser{})
+	_ = database.DB.AutoMigrate(&model.User{})
+	_ = database.DB.AutoMigrate(&model.Video{})
+	_ = database.DB.AutoMigrate(&model.Collect{})
+	_ = database.DB.AutoMigrate(&model.Favorite{})
+	_ = database.DB.AutoMigrate(&model.Follow{})
 }
