@@ -9,26 +9,18 @@ import (
 func Router(r *gin.Engine) *gin.Engine {
 
 	v1ApiGroup := r.Group("/api/v1")
-	authGroup := v1ApiGroup.Group("/auth")
+	authGroup := v1ApiGroup.Group("/user")
 	testGroup := v1ApiGroup.Group("/test").Use(middleware.JwtMiddleware)
 
 	{
-		v1ApiGroup.GET("/ping", func(c *gin.Context) {
-			c.JSON(200, gin.H{
-				"message": "pong",
-			})
-		})
 
-		//鉴权模块
+		testGroup.POST("/testUser/add", controller.TestUserCtrl.Add)
+		testGroup.GET("/testUser/select/:id", controller.TestUserCtrl.Select)
+		//用户鉴权模块
 		{
 			authGroup.POST("/login", controller.UserCtrl.Login)
 			authGroup.POST("/register", controller.UserCtrl.Register)
 		}
-		{
-			testGroup.POST("/testUser/add", controller.TestUserCtrl.Add)
-			testGroup.GET("/testUser/select/:id", controller.TestUserCtrl.Select)
-		}
-
 	}
 
 	return r
