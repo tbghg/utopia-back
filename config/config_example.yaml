@@ -1,19 +1,26 @@
 mysql:
-  addr: "localhost:3305"
-  password: password
-  user: user
-  dbname: dbname
+  addr: "localhost:3305"  # mysql地址
+  password: password    # mysql密码
+  user: user         # mysql用户名
+  dbname: dbname    # mysql数据库名
 redis:
-  addr: "localhost:6379"
-  password: "password"
-  db: 0
+  addr: "localhost:6379" # redis地址
+  password: "password" # redis密码
+  db: 0             # redis数据库
 log:
-  max_size: 100
-  max_backups: 7
-  max_age: 7
-  compress: false
-  level: debug
+  max_size: 100 # 单个日志文件最大大小，单位MB
+  max_backups: 7  # 最多保留的日志文件个数
+  max_age: 7  # 保留日志的最大天数
+  compress: false # 是否压缩日志
+  level: debug # 日志级别
 jwt:
-  secret: "secret"
-  issuer: "issuer"
-  expire: 360
+  secret: "secret"   # jwt密钥
+  issuer: "issuer"  # jwt签发者
+  expire: 360h  # jwt过期时间
+qiniu:
+  accessKey: "accessKey"  # 七牛云accessKey
+  secretKey: "secretKey"  # 七牛云secretKey
+  bucket: "bucket"  # 七牛云命名空间
+  kodoApi: "http://api.qiniu.com"  # api地址
+
+

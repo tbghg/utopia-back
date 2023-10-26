@@ -6,6 +6,8 @@ import (
 )
 
 func main() {
+	// 初始化配置读取工具
+	initialize.InitConfig()
 	// 初始化日志
 	initialize.InitLogger()
 	// 初始化数据库

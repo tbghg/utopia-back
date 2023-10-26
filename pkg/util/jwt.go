@@ -12,10 +12,10 @@ type MyClaims struct {
 	jwt.RegisteredClaims
 }
 
-var mySecret = []byte(config.V.GetString("jwt.secret"))
-
 // GenToken 生成 Token
 func GenToken(id int) string {
+	var mySecret = []byte(config.V.GetString("jwt.secret"))
+
 	c := MyClaims{
 		ID: id,
 		RegisteredClaims: jwt.RegisteredClaims{

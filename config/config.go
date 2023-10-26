@@ -7,7 +7,7 @@ import (
 
 var V *viper.Viper
 
-func init() {
+func Init() {
 	V = viper.New()
 	V.SetConfigName("config")
 	V.AddConfigPath("config")

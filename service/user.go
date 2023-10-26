@@ -2,6 +2,9 @@ package service
 
 import (
 	"errors"
+	"github.com/google/uuid"
+	"os"
+	"path"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
 	utils "utopia-back/pkg/util"
@@ -42,6 +45,24 @@ func (u *UserService) Register(username string, password string) (token string, 
 	salt := utils.RandomSalt()
 	password = utils.Md5EncodeWithSalt(password, salt)
 	user := model.User{Username: username, Password: password, Salt: salt}
+	// 生成随机昵称
+	uuidStr := uuid.New().String()[:8]
+	user.Nickname = uuidStr
+
+	//生成头像
+	avatarName := uuidStr + ".png"                      // 头像名称
+	nativeAvatarPath := path.Join("output", avatarName) // 头像保存路径
+	err = utils.QuickGenAvatar(nativeAvatarPath)        // 生成头像
+	if err != nil {
+		return "", 0, err
+	}
+	newAvatarPath, err := utils.QuickUploadFile(nativeAvatarPath, avatarName) // 上传头像到七牛云kodo对象存储
+	if err != nil {
+		return "", 0, err
+	}
+	user.Avatar = newAvatarPath       // 保存头像访问路径
+	err = os.Remove(nativeAvatarPath) // 删除本地头像
+
 	// 创建用户
 	id, err = u.Dal.CreateUser(&user)
 	if err != nil {

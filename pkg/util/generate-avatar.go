@@ -50,3 +50,7 @@ func GenerateAvatar(width, height, blockWidth, blockHeight int, outputPath strin
 	}
 	return nil
 }
+
+func QuickGenAvatar(outputPath string) error {
+	return GenerateAvatar(420, 420, 140, 140, outputPath)
+}
