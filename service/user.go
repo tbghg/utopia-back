@@ -12,17 +12,12 @@ type UserService struct {
 }
 
 var (
-	ErrorUsernameEmpty = errors.New("用户名和密码不能为空")
 	ErrorUserExists    = errors.New("用户已存在")
 	ErrorUserNotExists = errors.New("用户不存在")
 	ErrorPasswordWrong = errors.New("密码错误")
 )
 
 func (u *UserService) Login(username string, password string) (token string, id uint, err error) {
-	// 检查用户名和密码是否为空
-	if username == "" || password == "" {
-		return "", 0, ErrorUsernameEmpty
-	}
 	// 检查用户是否存在
 	user, err := u.Dal.GetUserByUsername(username)
 	if err != nil {
@@ -37,10 +32,6 @@ func (u *UserService) Login(username string, password string) (token string, id 
 }
 
 func (u *UserService) Register(username string, password string) (token string, id uint, err error) {
-	// 检查用户名和密码是否为空
-	if username == "" || password == "" {
-		return "", 0, ErrorUsernameEmpty
-	}
 	// 检查用户是否存在
 	_, err = u.Dal.GetUserByUsername(username)
 	if err == nil {

@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"utopia-back/database/implement"
+	utils "utopia-back/pkg/util"
 	"utopia-back/service"
 )
 
@@ -25,28 +26,37 @@ type data struct {
 }
 
 type userRequest struct {
-	Username string `json:"username"`
-	Password string `json:"password"`
+	Username string `json:"username" validate:"required"`
+	Password string `json:"password" validate:"required"`
 }
 
 func (u *UserController) Login(c *gin.Context) {
 
-	var r userRequest
+	var (
+		r   userRequest
+		err error
+	)
+	// 请求处理失败，返回错误信息
+	defer func() {
+		if err != nil {
+			c.JSON(http.StatusOK, &Response{
+				Code: ErrorCode,
+				Msg:  err.Error(),
+			})
+		}
+	}()
+
 	// 接收参数并绑定
-	err := c.ShouldBindJSON(&r)
-	if err != nil {
-		c.JSON(http.StatusOK, &Response{
-			Code: ErrorCode,
-			Msg:  err.Error(),
-		})
+	if err = c.ShouldBindJSON(&r); err != nil {
+		return
+	}
+	// 参数校验
+	if err = utils.Validate.Struct(r); err != nil {
+		return
 	}
 	// 登录
 	token, id, err := u.Service.Login(r.Username, r.Password)
 	if err != nil {
-		c.JSON(200, &Response{
-			Code: ErrorCode,
-			Msg:  err.Error(),
-		})
 		return
 	}
 
@@ -64,25 +74,35 @@ func (u *UserController) Login(c *gin.Context) {
 
 func (u *UserController) Register(c *gin.Context) {
 
-	var r userRequest
+	var (
+		r   userRequest
+		err error
+	)
+
+	defer func() {
+		if err != nil {
+			c.JSON(http.StatusOK, &Response{
+				Code: ErrorCode,
+				Msg:  err.Error(),
+			})
+		}
+	}()
+
 	// 接收参数并绑定
-	err := c.ShouldBindJSON(&r)
-	if err != nil {
-		c.JSON(http.StatusOK, &Response{
-			Code: ErrorCode,
-			Msg:  err.Error(),
-		})
+	if err = c.ShouldBindJSON(&r); err != nil {
+		return
+	}
+	// 参数校验
+	if err = utils.Validate.Struct(r); err != nil {
+		return
 	}
 	// 注册
 	token, id, err := u.Service.Register(r.Username, r.Password)
 	if err != nil {
-		c.JSON(200, &Response{
-			Code: ErrorCode,
-			Msg:  err.Error(),
-		})
 		return
 	}
-	c.JSON(200, &Response{
+
+	c.JSON(http.StatusOK, &Response{
 		Code: SuccessCode,
 		Msg:  "ok",
 		Data: data{
