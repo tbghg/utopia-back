@@ -12,7 +12,7 @@ func InitDB() {
 	_ = database.DB.AutoMigrate(&model.TestUser{})
 	_ = database.DB.AutoMigrate(&model.User{})
 	_ = database.DB.AutoMigrate(&model.Video{})
-	_ = database.DB.AutoMigrate(&model.Collect{})
+	_ = database.DB.AutoMigrate(&model.Like{})
 	_ = database.DB.AutoMigrate(&model.Favorite{})
 	_ = database.DB.AutoMigrate(&model.Follow{})
 }

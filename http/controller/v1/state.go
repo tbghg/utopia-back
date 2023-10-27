@@ -1,5 +1,7 @@
 package v1
 
+import "errors"
+
 type ResponseWithData struct {
 	Code int         `json:"code"`
 	Msg  string      `json:"msg"`
@@ -16,6 +18,9 @@ var (
 		Code: SuccessCode,
 		Msg:  "success",
 	}
+
+	ActionTypeInvalidError = errors.New("操作类型无效") // 操作类型无效
+	UserIDInvalidError     = errors.New("用户id无效") // 用户id无效
 )
 
 const (
