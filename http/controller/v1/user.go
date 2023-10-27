@@ -34,7 +34,7 @@ func (u *UserController) Login(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &Response{
+			c.JSON(http.StatusOK, &ResponseWithData{
 				Code: ErrorCode,
 				Msg:  err.Error(),
 			})
@@ -56,7 +56,7 @@ func (u *UserController) Login(c *gin.Context) {
 	}
 
 	// 成功登录
-	c.JSON(200, &Response{
+	c.JSON(200, &ResponseWithData{
 		Code: SuccessCode,
 		Msg:  "ok",
 		Data: data{
@@ -76,7 +76,7 @@ func (u *UserController) Register(c *gin.Context) {
 
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &Response{
+			c.JSON(http.StatusOK, &ResponseWithData{
 				Code: ErrorCode,
 				Msg:  err.Error(),
 			})
@@ -97,7 +97,7 @@ func (u *UserController) Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &Response{
+	c.JSON(http.StatusOK, &ResponseWithData{
 		Code: SuccessCode,
 		Msg:  "ok",
 		Data: data{
