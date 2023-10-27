@@ -1,8 +1,6 @@
 package v1
 
 import (
-	"context"
-	"strconv"
 	"utopia-back/database/abstract"
 	"utopia-back/pkg/redis"
 	abstract2 "utopia-back/service/abstract"
@@ -28,48 +26,26 @@ func (f FavoriteService) GetFavoriteList(userId uint) (list []uint, err error) {
 }
 
 func (f FavoriteService) IsFavorite(userId uint, videoId uint) (isFavorite bool, err error) {
-	//先去redis里面查找
+	// 构造key
 	key := "favorite:" + "isFavorite:" + string(userId) + ":" + string(videoId)
-	ctx := context.Background()
-	value, err := redis.RDB.Get(ctx, key).Result()
-	if err != nil {
-		//redis里面没有，去数据库里面查找
-		isFavorite, err = f.Dal.IsFavorite(userId, videoId)
-		if err != nil {
-			return false, err
-		}
-		//将结果存入redis
-		redis.RDB.Set(ctx, key, isFavorite, 0)
-		return isFavorite, nil
-	}
-	//redis里面有，直接返回
-	res, err := strconv.ParseBool(value)
+	// 缓存
+	res, err := redis.Cache(func() (interface{}, error) { return f.Dal.IsFavorite(userId, videoId) }, key, redis.TypeBool)
+	// 返回结果
 	if err != nil {
 		return false, err
 	}
-	return res, nil
+	return res.(bool), nil
 
 }
 
 func (f FavoriteService) GetFavoriteCount(videoId uint) (count int64, err error) {
-	//先去redis里面查找
+	// 构造key
 	key := "favorite:count:" + string(videoId)
-	ctx := context.Background()
-	value, err := redis.RDB.Get(ctx, key).Result()
-	if err != nil {
-		//redis里面没有，去数据库里面查找
-		count, err = f.Dal.GetFavoriteCount(videoId)
-		if err != nil {
-			return 0, err
-		}
-		//将结果存入redis
-		redis.RDB.Set(ctx, key, count, 0)
-		return count, nil
-	}
-	//redis里面有，直接返回
-	res, err := strconv.ParseInt(value, 10, 64)
+	// 缓存层取数据
+	res, err := redis.Cache(func() (interface{}, error) { return f.Dal.GetFavoriteCount(videoId) }, key, redis.TypeInt64)
+	// 返回结果
 	if err != nil {
 		return 0, err
 	}
-	return res, nil
+	return res.(int64), nil
 }
