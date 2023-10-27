@@ -10,5 +10,5 @@ type FavoriteDal interface {
 	// IsFavorite 是否收藏
 	IsFavorite(userId uint, videoId uint) (isFavorite bool, err error)
 	// GetFavoriteCount 获取收藏数
-	GetFavoriteCount(videoId uint) (count int64, err error)
+	GetFavoriteCount(videoId uint) (count interface{}, err error)
 }
