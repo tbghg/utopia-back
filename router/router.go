@@ -25,6 +25,8 @@ func Router(r *gin.Engine) *gin.Engine {
 		// 交互模块
 		{
 			interact.POST("/favorite", controller.FavoriteCtrl.Favorite)
+			interact.POST("/follow", controller.FollowCtrl.Follow)
+			interact.GET("/follower/list", controller.FollowCtrl.FansList)
 		}
 
 	}

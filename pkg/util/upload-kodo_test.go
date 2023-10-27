@@ -33,7 +33,7 @@ func TestUploadFile(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := UploadFile(tt.args.localFile, tt.args.key, tt.args.bucket, tt.args.accessKey, tt.args.secretKey)
+			got, err := uploadFile(tt.args.localFile, tt.args.key, tt.args.bucket, tt.args.accessKey, tt.args.secretKey)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("UploadFile() error = %v, wantErr %v", err, tt.wantErr)
 				return

@@ -2,6 +2,7 @@ package v1
 
 import (
 	"utopia-back/database/abstract"
+	"utopia-back/model"
 	"utopia-back/pkg/redis"
 	abstract2 "utopia-back/service/abstract"
 )
@@ -21,7 +22,7 @@ func (f FollowService) UnFollow(userId uint, followId uint) (err error) {
 }
 
 // GetFansList 获取粉丝列表
-func (f FollowService) GetFansList(userId uint) (list []uint, err error) {
+func (f FollowService) GetFansList(userId uint) (list []model.UserInfo, err error) {
 	return f.Dal.GetFansList(userId)
 }
 
