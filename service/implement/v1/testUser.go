@@ -1,4 +1,4 @@
-package service
+package v1
 
 import (
 	"utopia-back/database/abstract"

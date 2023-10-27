@@ -4,16 +4,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"strconv"
 	"utopia-back/database/implement"
-	"utopia-back/service"
+	"utopia-back/service/implement/v1"
 )
 
 type TestUserController struct {
-	Service *service.TestUserService
+	Service *v1.TestUserService
 }
 
 func NewTestUserCtrl() *TestUserController {
 	return &TestUserController{
-		Service: &service.TestUserService{
+		Service: &v1.TestUserService{
 			Dal: &implement.TestUserImpl{},
 		},
 	}

@@ -5,16 +5,17 @@ import (
 	"net/http"
 	"utopia-back/database/implement"
 	utils "utopia-back/pkg/util"
-	"utopia-back/service"
+	"utopia-back/service/abstract"
+	v1 "utopia-back/service/implement/v1"
 )
 
 type UserController struct {
-	Service *service.UserService
+	Service abstract.UserService
 }
 
 func NewUserController() *UserController {
 	return &UserController{
-		Service: &service.UserService{
+		Service: &v1.UserService{
 			Dal: &implement.UserImpl{},
 		},
 	}

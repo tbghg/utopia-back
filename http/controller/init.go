@@ -11,9 +11,3 @@ func Init() {
 	TestUserCtrl = v1.NewTestUserCtrl()
 	UserCtrl = v1.NewUserController()
 }
-
-type Response struct {
-	Code int    `json:"code"`
-	Msg  string `json:"msg"`
-	Data interface{}
-}
