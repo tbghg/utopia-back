@@ -15,6 +15,7 @@ const (
 	ErrorTokenExpiredMsg     = "token过期"
 	ErrorTokenNotValidYetMsg = "token未激活"
 	ErrorTokenInvalidMsg     = "token无效"
+	ErrorTokenHandleFailed   = "无法处理此Token"
 )
 
 func JwtMiddleware(c *gin.Context) {
@@ -45,43 +46,26 @@ func JwtMiddleware(c *gin.Context) {
 		return secret, nil
 	})
 	if err != nil {
-		//如果是feed请求，直接放行
-		if c.Request.URL.Path == "/api/v1/feed" {
-			c.Next()
-			return
-		}
 		// 判断错误类型并处理
 		var ve *jwt.ValidationError
 		if errors.As(err, &ve) {
-			if ve.Errors&jwt.ValidationErrorMalformed != 0 { //token格式错误
-				c.JSON(http.StatusOK, gin.H{
-					"code": 401,
-					"msg":  ErrorTokenFormatMsg,
-				})
-				c.Abort() //阻止执行
-				return
-			} else if ve.Errors&jwt.ValidationErrorExpired != 0 { //token过期
-				c.JSON(http.StatusOK, gin.H{
-					"code": 401,
-					"msg":  ErrorTokenExpiredMsg,
-				})
-				c.Abort() //阻止执行
-				return
-			} else if ve.Errors&jwt.ValidationErrorNotValidYet != 0 { //token未激活
-				c.JSON(http.StatusOK, gin.H{
-					"code": 401,
-					"msg":  ErrorTokenNotValidYetMsg,
-				})
-				c.Abort() //阻止执行
-				return
+			var msg string
+			if ve.Errors&jwt.ValidationErrorMalformed != 0 {
+				msg = ErrorTokenFormatMsg //token格式错误
+			} else if ve.Errors&jwt.ValidationErrorExpired != 0 {
+				msg = ErrorTokenExpiredMsg //token过期
+			} else if ve.Errors&jwt.ValidationErrorNotValidYet != 0 {
+				msg = ErrorTokenNotValidYetMsg //token未激活
 			} else {
-				c.JSON(http.StatusOK, gin.H{
-					"code": 401,
-					"msg":  "无法处理此Token",
-				})
-				c.Abort() //阻止执行
-				return
+				msg = ErrorTokenHandleFailed //无法处理此Token
 			}
+
+			c.JSON(http.StatusOK, gin.H{
+				"code": 401,
+				"msg":  msg,
+			})
+			c.Abort() //阻止执行
+			return
 		}
 	}
 	if claims, ok := token.Claims.(*utils.MyClaims); ok && token.Valid {
