@@ -27,7 +27,7 @@ func (f *FollowDal) GetFansList(userId uint) (list []model.UserInfo, err error) 
 	var users []model.UserInfo
 	//联表查询
 	res := database.DB.Model(model.Follow{}).
-		Select("users.*, COUNT(DISTINCT following.id) AS following_count, COUNT(DISTINCT followers.id) AS followers_count").
+		Select("users.*, COUNT(DISTINCT following.id) AS follow_count, COUNT(DISTINCT followers.id) AS fans_count").
 		Joins("LEFT JOIN users ON users.id = follows.user_id").
 		Joins("LEFT JOIN follows AS following ON following.user_id = users.id").
 		Joins("LEFT JOIN follows AS followers ON followers.fun_id = users.id").
