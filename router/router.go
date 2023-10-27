@@ -17,7 +17,7 @@ func Router(r *gin.Engine) *gin.Engine {
 
 		testGroup.POST("/testUser/add", controller.TestUserCtrl.Add)
 		testGroup.GET("/testUser/select/:id", controller.TestUserCtrl.Select)
-		//用户鉴权模块
+		// 用户鉴权模块
 		{
 			authGroup.POST("/login", controller.UserCtrl.Login)
 			authGroup.POST("/register", controller.UserCtrl.Register)
@@ -26,6 +26,14 @@ func Router(r *gin.Engine) *gin.Engine {
 		{
 			interact.POST("/favorite", controller.FavoriteCtrl.Favorite)
 		}
+
+	}
+
+	videoGroup := v1ApiGroup.Group("/video")
+	{
+		// 获取上传视频token
+		videoGroup.GET("/upload/token", controller.VideoCtrl.UploadVideoToken).Use(middleware.JwtMiddleware)
+		videoGroup.GET("/upload/callback", controller.VideoCtrl.UploadVideoCallback)
 
 	}
 
