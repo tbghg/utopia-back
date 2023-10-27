@@ -14,6 +14,11 @@ type UserService struct {
 	Dal abstract.UserDal
 }
 
+func (u *UserService) GetUserInfo(id uint) (userInfo model.UserInfo, err error) {
+
+	return u.Dal.GetUserInfoById(id)
+}
+
 var (
 	ErrorUserExists    = errors.New("用户已存在")
 	ErrorUserNotExists = errors.New("用户不存在")
@@ -29,7 +34,7 @@ func (u *UserService) Login(username string, password string) (token string, id 
 	// 检查密码是否正确
 	if utils.ValidMd5EncodeWithSalt(password, user.Salt, user.Password) {
 		//  生成token
-		return utils.GenToken(int(id)), user.ID, nil
+		return utils.GenToken(int(user.ID)), user.ID, nil
 	}
 	return "", 0, ErrorPasswordWrong
 }
