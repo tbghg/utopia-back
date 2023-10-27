@@ -22,5 +22,7 @@ qiniu:
   secretKey: "secretKey"  # 七牛云secretKey
   bucket: "bucket"  # 七牛云命名空间
   kodoApi: "http://api.qiniu.com"  # api地址
-
+server:
+  ip: "127.0.0.1" # 服务所在ip
+  port: ":8080" # 服务所在端口
 

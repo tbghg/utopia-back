@@ -34,9 +34,8 @@ func Router(r *gin.Engine) *gin.Engine {
 	videoGroup := v1ApiGroup.Group("/video")
 	{
 		// 获取上传视频token
-		videoGroup.GET("/upload/token", controller.VideoCtrl.UploadVideoToken).Use(middleware.JwtMiddleware)
-		videoGroup.GET("/upload/callback", controller.VideoCtrl.UploadVideoCallback)
-
+		videoGroup.GET("/upload/token", middleware.JwtMiddleware, controller.VideoCtrl.UploadVideoToken)
+		videoGroup.POST("/upload/callback", controller.VideoCtrl.UploadVideoCallback)
 	}
 
 	return r

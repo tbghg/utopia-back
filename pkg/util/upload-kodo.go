@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	callbackURL      = "127.0.0.1:8080/api/v1/video/upload/callback"
-	callbackBody     = `{"key":"$(key)","author_id":"$(x:author_id)"}`
+	callbackPath     = "/api/v1/video/upload/callback"
+	callbackBody     = `{"key":"$(key)","is_image":"$(x:is_image)","author_id":"$(x:author_id)","cover_url":"$(x:cover_url)","describe":"$(x:describe)","video_type":"$(x:video_type)"}`
 	callbackBodyType = "application/json"
 )
 
@@ -29,32 +29,30 @@ func buildCfg() (cfg storage.Config) {
 
 // GetCallbackToken 获取带有回调的Token
 func GetCallbackToken() (upToken string) {
-	accessKey := config.V.GetString("qiniu.accessKey")
-	secretKey := config.V.GetString("qiniu.secretKey")
 	bucket := config.V.GetString("qiniu.bucket")
+	callbackUrl := config.V.GetString("server.ip") + config.V.GetString("server.port") + callbackPath
 	putPolicy := &storage.PutPolicy{
 		Scope:            bucket,
-		CallbackURL:      callbackURL,
+		CallbackURL:      callbackUrl,
 		CallbackBody:     callbackBody,
 		CallbackBodyType: callbackBodyType,
 	}
-	return getUpToken(putPolicy, accessKey, secretKey)
+	return putPolicy.UploadToken(GetMac())
 }
 
 func QuickUploadFile(localFile, key string) (string, error) {
-	accessKey := config.V.GetString("qiniu.accessKey")
-	secretKey := config.V.GetString("qiniu.secretKey")
 	bucket := config.V.GetString("qiniu.bucket")
-	ret, err := uploadFile(localFile, key, bucket, accessKey, secretKey)
+	ret, err := uploadFile(localFile, key, bucket, GetMac())
 	// 拼接返回完整的url
 	apiPath := config.V.GetString("qiniu.kodoApi")
 	return path.Join(apiPath, ret), err
 }
 
 // uploadFile 上传文件到七牛云
-func uploadFile(localFile, key, bucket, accessKey, secretKey string) (string, error) {
+func uploadFile(localFile, key, bucket string, mac *qbox.Mac) (string, error) {
 
-	upToken := getUpToken(&storage.PutPolicy{Scope: bucket}, accessKey, secretKey)
+	putPolicy := &storage.PutPolicy{Scope: bucket}
+	upToken := putPolicy.UploadToken(mac)
 	// 构建配置
 	cfg := buildCfg()
 
@@ -69,7 +67,8 @@ func uploadFile(localFile, key, bucket, accessKey, secretKey string) (string, er
 	return ret.Key, nil
 }
 
-func getUpToken(putPolicy *storage.PutPolicy, accessKey string, secretKey string) (upToken string) {
-	mac := qbox.NewMac(accessKey, secretKey)
-	return putPolicy.UploadToken(mac)
+func GetMac() *qbox.Mac {
+	accessKey := config.V.GetString("qiniu.accessKey")
+	secretKey := config.V.GetString("qiniu.secretKey")
+	return qbox.NewMac(accessKey, secretKey)
 }

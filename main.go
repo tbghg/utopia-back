@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	"utopia-back/config"
 	"utopia-back/initialize"
 )
 
@@ -21,5 +22,5 @@ func main() {
 	// 初始化配置
 	r := gin.New()
 	initialize.InitRoute(r)
-	r.Run()
+	r.Run(config.V.GetString("server.port"))
 }

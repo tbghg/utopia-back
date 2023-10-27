@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"os"
 	"testing"
 )
@@ -12,6 +13,7 @@ func TestUploadFile(t *testing.T) {
 		bucket    string
 		secretKey string
 		accessKey string
+		mac       *qbox.Mac
 	}
 	tests := []struct {
 		name    string
@@ -32,10 +34,11 @@ func TestUploadFile(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
+		tt.args.mac = qbox.NewMac(tt.args.accessKey, tt.args.secretKey)
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := uploadFile(tt.args.localFile, tt.args.key, tt.args.bucket, tt.args.accessKey, tt.args.secretKey)
+			got, err := uploadFile(tt.args.localFile, tt.args.key, tt.args.bucket, tt.args.mac)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("UploadFile() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("uploadFile() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
 			t.Log(got)

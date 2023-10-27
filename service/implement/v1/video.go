@@ -13,12 +13,13 @@ type VideoService struct {
 // 实现接口
 var _ abstract2.VideoService = (*VideoService)(nil)
 
-func (v *VideoService) UploadVideoCallback(authorId uint, url string, coverUrl string, describe string) (err error) {
+func (v *VideoService) UploadVideoCallback(authorId uint, url string, coverUrl string, describe string, videoType uint) (err error) {
 	video := &model.Video{
-		AuthorID: authorId,
-		PlayUrl:  url,
-		CoverUrl: coverUrl,
-		Describe: describe,
+		AuthorID:  authorId,
+		PlayUrl:   url,
+		CoverUrl:  coverUrl,
+		VideoType: videoType,
+		Describe:  describe,
 	}
 	_, err = v.Dal.CreateVideo(video)
 	if err != nil {
