@@ -11,6 +11,10 @@ type FollowService struct {
 	Dal abstract.FollowDal
 }
 
+func (f FollowService) GetFollowList(userId uint) (list []model.UserInfo, err error) {
+	return f.Dal.GetFollowList(userId)
+}
+
 // Follow 关注
 func (f FollowService) Follow(userId uint, followId uint) (err error) {
 	return f.Dal.Follow(userId, followId)

@@ -15,4 +15,6 @@ type FollowDal interface {
 	GetFollowCount(userId uint) (count int64, err error)
 	// GetFansCount 获取粉丝数
 	GetFansCount(userId uint) (count int64, err error)
+	// GetFollowList 获取关注列表
+	GetFollowList(userId uint) (list []model.UserInfo, err error)
 }

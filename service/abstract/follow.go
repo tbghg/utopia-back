@@ -13,4 +13,6 @@ type FollowService interface {
 	IsFollow(userId uint, followId uint) (isFollow bool, err error)
 	// GetFollowCount 获取关注数
 	GetFollowCount(userId uint) (count int64, err error)
+	// GetFollowList 获取关注列表
+	GetFollowList(userId uint) (list []model.UserInfo, err error)
 }

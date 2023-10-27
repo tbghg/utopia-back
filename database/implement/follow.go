@@ -38,6 +38,22 @@ func (f *FollowDal) GetFansList(userId uint) (list []model.UserInfo, err error) 
 	return users, res.Error
 }
 
+// GetFollowList 获取关注列表
+func (f *FollowDal) GetFollowList(userId uint) (list []model.UserInfo, err error) {
+	var users []model.UserInfo
+	//联表查询
+	res := database.DB.Model(model.Follow{}).
+		Select("users.*, COUNT(DISTINCT following.id) AS follow_count, COUNT(DISTINCT followers.id) AS fans_count").
+		Joins("LEFT JOIN users ON users.id = follows.fun_id").
+		Joins("LEFT JOIN follows AS following ON following.user_id = users.id").
+		Joins("LEFT JOIN follows AS followers ON followers.fun_id = users.id").
+		Where("follows.user_id IN (?)", userId).
+		Group("follows.fun_id").
+		Find(&users)
+
+	return users, res.Error
+}
+
 func (f *FollowDal) IsFollow(userId uint, followId uint) (isFollow bool, err error) {
 	var follow model.Follow
 	res := database.DB.Where("user_id = ? AND follow_id = ?", userId, followId).First(&follow)

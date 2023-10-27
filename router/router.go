@@ -24,9 +24,10 @@ func Router(r *gin.Engine) *gin.Engine {
 		}
 		// 交互模块
 		{
-			interact.POST("/favorite", controller.FavoriteCtrl.Favorite)
-			interact.POST("/follow", controller.FollowCtrl.Follow)
-			interact.GET("/follower/list", controller.FollowCtrl.FansList)
+			interact.POST("/favorite", controller.FavoriteCtrl.Favorite)   // 收藏/取消收藏
+			interact.POST("/follow", controller.FollowCtrl.Follow)         // 关注/取消关注
+			interact.GET("/follower/list", controller.FollowCtrl.FansList) // 获取粉丝列表
+			interact.GET("/follow/list", controller.FollowCtrl.FollowList) // 获取关注列表
 		}
 
 	}

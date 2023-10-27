@@ -103,3 +103,36 @@ func (f *FollowController) FansList(c *gin.Context) {
 		Data: list,
 	})
 }
+
+// FollowList 获取关注列表
+func (f *FollowController) FollowList(c *gin.Context) {
+	var err error
+
+	// 请求处理失败，返回错误信息
+	defer func() {
+		if err != nil {
+			c.JSON(http.StatusOK, &ResponseWithoutData{
+				Code: ErrorCode,
+				Msg:  err.Error(),
+			})
+		}
+	}()
+
+	// 获取用户id
+	value, ok := c.Get("user_id")
+	userId, ok := value.(int)
+	if !ok {
+		err = UserIDInvalidError
+		return
+	}
+
+	list, err := f.Service.GetFollowList(uint(userId))
+	if err != nil {
+		return
+	}
+	c.JSON(http.StatusOK, &ResponseWithData{
+		Code: SuccessCode,
+		Msg:  "ok",
+		Data: list,
+	})
+}
