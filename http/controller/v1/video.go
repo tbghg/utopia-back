@@ -60,7 +60,7 @@ func (v *VideoController) UploadVideoCallback(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &ResponseWithData{
+			c.JSON(http.StatusOK, &ResponseWithoutData{
 				Code: ErrorCode,
 				Msg:  err.Error(),
 			})
