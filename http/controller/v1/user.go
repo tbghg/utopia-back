@@ -15,7 +15,7 @@ func NewUserController(s abstract.UserService) *UserController {
 	return &UserController{Service: s}
 }
 
-type data struct {
+type authData struct {
 	Token  string `json:"token"`
 	UserId int    `json:"user_id"`
 }
@@ -59,7 +59,7 @@ func (u *UserController) Login(c *gin.Context) {
 	c.JSON(200, &ResponseWithData{
 		Code: SuccessCode,
 		Msg:  "ok",
-		Data: data{
+		Data: authData{
 			Token:  token,
 			UserId: int(id),
 		},
@@ -100,7 +100,7 @@ func (u *UserController) Register(c *gin.Context) {
 	c.JSON(http.StatusOK, &ResponseWithData{
 		Code: SuccessCode,
 		Msg:  "ok",
-		Data: data{
+		Data: authData{
 			Token:  token,
 			UserId: int(id),
 		}})

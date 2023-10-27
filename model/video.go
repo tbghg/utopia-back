@@ -17,6 +17,6 @@ type Video struct {
 
 	AuthorID uint   `gorm:"not null;index:idx_author_del,priority:1" json:"author_id"` // 作者id
 	PlayUrl  string `gorm:"type:varchar(64);not null" json:"play_url"`                 // 视频播放地址
+	CoverUrl string `gorm:"type:varchar(64);not null" json:"cover_url"`                // 视频封面
 	Describe string `gorm:"type:varchar(64)" json:"describe"`                          // 描述
-	//CoverUrl string `gorm:"type:varchar(64);not null" json:"cover_url"` // 视频封面
 }
