@@ -3,22 +3,16 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"utopia-back/database/implement"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
-	v1 "utopia-back/service/implement/v1"
 )
 
 type UserController struct {
 	Service abstract.UserService
 }
 
-func NewUserController() *UserController {
-	return &UserController{
-		Service: &v1.UserService{
-			Dal: &implement.UserImpl{},
-		},
-	}
+func NewUserController(s abstract.UserService) *UserController {
+	return &UserController{Service: s}
 }
 
 type data struct {
