@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// Favorite 点赞表
+// Favorite 收藏表
 //
 // 视频ID-用户ID	唯一索引
 // 视频ID-Del	索引

@@ -5,11 +5,11 @@ import (
 	"time"
 )
 
-// Collect 收藏表
+// Like 点赞表
 //
 // 视频ID-用户ID	唯一索引
 // 视频ID-Del	索引
-type Collect struct {
+type Like struct {
 	ID        uint `gorm:"primarykey"`
 	CreatedAt time.Time
 	UpdatedAt time.Time
