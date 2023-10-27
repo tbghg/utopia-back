@@ -57,15 +57,16 @@ func (f *FavoriteController) Favorite(c *gin.Context) {
 		return
 	}
 	// 判断操作类型
-	if r.ActionType != 1 && r.ActionType != 2 {
-		err = ActionTypeInvalidError
-		return
-	}
-
-	if r.ActionType == 1 {
+	switch r.ActionType {
+	case 1:
 		err = f.FavoriteService.AddFavorite(uint(userID), uint(r.VideoId))
-	} else {
+	case 2:
 		err = f.FavoriteService.DeleteFavorite(uint(userID), uint(r.VideoId))
+	default:
+		err = ActionTypeInvalidError
+	}
+	if err != nil {
+		return
 	}
 
 	// 成功添加收藏
