@@ -15,6 +15,8 @@ func main() {
 	initialize.InitDB()
 	// 初始化redis
 	initialize.InitRedis()
+	// 初始化限流工具
+	initialize.InitRateLimit()
 
 	// 初始化配置
 	r := gin.New()

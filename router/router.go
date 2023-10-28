@@ -10,6 +10,7 @@ import (
 )
 
 func Router(r *gin.Engine) *gin.Engine {
+	r.Use(middleware.RateLimit)
 
 	v1ApiGroup := r.Group("/api/v1")
 	{

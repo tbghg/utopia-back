@@ -8,6 +8,7 @@ require (
 	github.com/go-sql-driver/mysql v1.7.1
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.1.2
+	github.com/juju/ratelimit v1.0.2
 	github.com/qiniu/go-sdk/v7 v7.18.2
 	github.com/redis/go-redis/v9 v9.2.1
 	github.com/spf13/cast v1.5.1
