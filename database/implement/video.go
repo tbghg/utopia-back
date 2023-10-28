@@ -16,14 +16,10 @@ func (v *VideoDal) CreateVideo(video *model.Video) (id uint, err error) {
 	return video.ID, nil
 }
 
-func (v *VideoDal) IsVideoExist(videoId uint) (exist bool, err error) {
+func (v *VideoDal) IsVideoExist(videoId uint) (err error) {
 	res := database.DB.Where("id = ?", videoId).First(&model.Video{})
 	if res.Error != nil {
-		return false, res.Error
+		return res.Error
 	}
-	if res.RowsAffected == 0 {
-		return false, nil
-	}
-
-	return true, nil
+	return nil
 }
