@@ -25,20 +25,22 @@ type uploadVideoTokenData struct {
 }
 
 type uploadCallbackReq struct {
-	Key       string `json:"key" validate:"required"`
-	IsImage   string `json:"is_image" validate:"required"`
-	AuthorId  string `json:"author_id"` // todo 可更改为JWT-Token，增强安全性
-	VideoType string `json:"video_type"`
-	CoverUrl  string `json:"cover_url"`
-	Describe  string `json:"describe"`
+	Key         string `json:"key" validate:"required"`
+	Type        string `json:"type" validate:"required"`
+	Uid         string `json:"uid"` // todo 可更改为JWT-Token，增强安全性
+	VideoTypeId string `json:"video_type_id"`
+	CoverUrl    string `json:"cover_url"`
+	Describe    string `json:"describe"`
 }
 
 type uploadCallbackData struct {
 	ImageUrl string `json:"image_url"`
 }
 
-// 上传是否为图片
-const callbackIsImage = "YES"
+const (
+	callbackCover  = "COVER"  // 封面
+	callbackAvatar = "AVATAR" // 头像
+)
 
 func (v *VideoController) UploadVideoToken(c *gin.Context) {
 	upToken := utils.GetCallbackToken()
@@ -67,6 +69,7 @@ func (v *VideoController) UploadVideoCallback(c *gin.Context) {
 			})
 		}
 	}()
+
 	// 校验是否为七牛云调用
 	isQiNiu, err := qbox.VerifyCallback(utils.GetMac(), c.Request)
 	if !isQiNiu || err != nil {
@@ -84,8 +87,15 @@ func (v *VideoController) UploadVideoCallback(c *gin.Context) {
 	if err != nil {
 		return
 	}
+
 	url := config.V.GetString("qiniu.kodoApi") + "/" + r.Key
-	if r.IsImage == callbackIsImage {
+	if r.Type == callbackCover {
+		err = v.VideoService.UpdateAvatar(authorId, url)
+		if err != nil {
+			return
+		}
+	}
+	if r.Type == callbackAvatar || r.Type == callbackCover {
 		c.JSON(http.StatusOK, &ResponseWithData{
 			Code: SuccessCode,
 			Msg:  "ok",
@@ -110,12 +120,12 @@ func callbackReqValidate(r uploadCallbackReq) (authorId uint, videoType uint, er
 	if err = utils.Validate.Struct(r); err != nil {
 		return
 	}
-	if r.IsImage == callbackIsImage {
+	if r.Type == callbackCover || r.Type == callbackAvatar {
 		return
 	}
 	// 上传视频，校验参数
-	aid, err1 := strconv.ParseUint(r.AuthorId, 10, 64)
-	tid, err2 := strconv.ParseUint(r.VideoType, 10, 64)
+	aid, err1 := strconv.ParseUint(r.Uid, 10, 64)
+	tid, err2 := strconv.ParseUint(r.VideoTypeId, 10, 64)
 	if err1 != nil || err2 != nil || r.CoverUrl == "null" {
 		err = errors.New("参数传递错误")
 		return

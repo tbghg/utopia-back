@@ -9,16 +9,19 @@ import (
 
 type VideoService struct {
 	VideoDal abstract.VideoDal
+	UserDal  abstract.UserDal
 }
 
 func NewVideoService() *VideoService {
 	return &VideoService{
-		VideoDal: &implement.VideoImpl{},
+		VideoDal: &implement.VideoDal{},
+		UserDal:  &implement.UserDal{},
 	}
 }
 
-// 实现接口
-var _ abstract2.VideoService = (*VideoService)(nil)
+func (v *VideoService) UpdateAvatar(uid uint, url string) error {
+	return v.UserDal.UpdateAvatar(uid, url)
+}
 
 func (v *VideoService) UploadVideoCallback(authorId uint, url string, coverUrl string, describe string, videoType uint) (err error) {
 	video := &model.Video{
@@ -34,3 +37,6 @@ func (v *VideoService) UploadVideoCallback(authorId uint, url string, coverUrl s
 	}
 	return
 }
+
+// 实现接口
+var _ abstract2.VideoService = (*VideoService)(nil)

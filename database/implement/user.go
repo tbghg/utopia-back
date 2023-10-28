@@ -70,4 +70,12 @@ func (u *UserDal) GetUserById(id uint) (user model.User, err error) {
 	return user, nil
 }
 
+func (u *UserDal) UpdateAvatar(id uint, avatarUrl string) (err error) {
+	res := database.DB.Model(&model.User{ID: id}).Update("avatar", avatarUrl)
+	if res.Error != nil {
+		return res.Error
+	}
+	return
+}
+
 var _ abstract.UserDal = (*UserDal)(nil)

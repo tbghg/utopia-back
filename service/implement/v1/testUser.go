@@ -12,7 +12,7 @@ type TestUserService struct {
 
 func NewTestUserService() *TestUserService {
 	return &TestUserService{
-		TestUserDal: &implement.TestUserImpl{},
+		TestUserDal: &implement.TestUserDal{},
 	}
 }
 

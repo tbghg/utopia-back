@@ -7,4 +7,5 @@ type UserDal interface {
 	CreateUser(user *model.User) (id uint, err error)
 	GetUserById(id uint) (user model.User, err error)
 	GetUserInfoById(id uint) (userInfo model.UserInfo, err error)
+	UpdateAvatar(id uint, avatarUrl string) (err error)
 }
