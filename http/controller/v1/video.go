@@ -12,15 +12,15 @@ import (
 	v1 "utopia-back/service/implement/v1"
 )
 
-type VideoController struct {
-	VideoService abstract.VideoService
+type StorageController struct {
+	StorageService abstract.StorageService
 }
 
-func NewVideoController() *VideoController {
-	return &VideoController{VideoService: v1.NewVideoService()}
+func NewStorageController() *StorageController {
+	return &StorageController{StorageService: v1.NewStorageService()}
 }
 
-type uploadVideoTokenData struct {
+type uploadTokenData struct {
 	Token string `json:"token"`
 }
 
@@ -33,7 +33,7 @@ type uploadCallbackReq struct {
 	Describe    string `json:"describe"`
 }
 
-type uploadCallbackData struct {
+type callbackData struct {
 	ImageUrl string `json:"image_url"`
 }
 
@@ -42,22 +42,22 @@ const (
 	callbackAvatar = "AVATAR" // 头像
 )
 
-func (v *VideoController) UploadVideoToken(c *gin.Context) {
+func (v *StorageController) UploadToken(c *gin.Context) {
 	upToken := utils.GetCallbackToken()
 	c.JSON(http.StatusOK, &ResponseWithData{
 		Code: SuccessCode,
 		Msg:  "ok",
-		Data: uploadVideoTokenData{
+		Data: uploadTokenData{
 			Token: upToken,
 		},
 	})
 }
 
-func (v *VideoController) UploadVideoCallback(c *gin.Context) {
+func (v *StorageController) UploadCallback(c *gin.Context) {
 	var (
-		r                   uploadCallbackReq
-		err                 error
-		authorId, videoType uint
+		r                uploadCallbackReq
+		err              error
+		uid, videoTypeId uint
 	)
 
 	// 请求处理失败，返回错误信息
@@ -83,14 +83,14 @@ func (v *VideoController) UploadVideoCallback(c *gin.Context) {
 		return
 	}
 	// 参数校验
-	authorId, videoType, err = callbackReqValidate(r)
+	uid, videoTypeId, err = callbackReqValidate(r)
 	if err != nil {
 		return
 	}
 
 	url := config.V.GetString("qiniu.kodoApi") + "/" + r.Key
 	if r.Type == callbackCover {
-		err = v.VideoService.UpdateAvatar(authorId, url)
+		err = v.StorageService.UpdateAvatar(uid, url)
 		if err != nil {
 			return
 		}
@@ -99,13 +99,13 @@ func (v *VideoController) UploadVideoCallback(c *gin.Context) {
 		c.JSON(http.StatusOK, &ResponseWithData{
 			Code: SuccessCode,
 			Msg:  "ok",
-			Data: uploadCallbackData{
+			Data: callbackData{
 				ImageUrl: url,
 			},
 		})
 		return
 	}
-	err = v.VideoService.UploadVideoCallback(authorId, url, r.CoverUrl, r.Describe, videoType)
+	err = v.StorageService.UploadVideoCallback(uid, url, r.CoverUrl, r.Describe, videoTypeId)
 	if err != nil {
 		return
 	}
@@ -116,7 +116,7 @@ func (v *VideoController) UploadVideoCallback(c *gin.Context) {
 
 }
 
-func callbackReqValidate(r uploadCallbackReq) (authorId uint, videoType uint, err error) {
+func callbackReqValidate(r uploadCallbackReq) (uid uint, videoTypeId uint, err error) {
 	if err = utils.Validate.Struct(r); err != nil {
 		return
 	}
@@ -130,6 +130,6 @@ func callbackReqValidate(r uploadCallbackReq) (authorId uint, videoType uint, er
 		err = errors.New("参数传递错误")
 		return
 	}
-	authorId, videoType = uint(aid), uint(tid)
+	uid, videoTypeId = uint(aid), uint(tid)
 	return
 }

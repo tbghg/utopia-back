@@ -16,7 +16,7 @@ func Router(r *gin.Engine) *gin.Engine {
 		TestUserCtrl: v12.NewTestUserCtrl(),
 		UserCtrl:     v12.NewUserController(),
 		FavoriteCtrl: v12.NewFavoriteController(),
-		VideoCtrl:    v12.NewVideoController(),
+		StorageCtrl:  v12.NewStorageController(),
 		FollowCtrl:   v12.NewFollowController(),
 	}
 
@@ -41,12 +41,11 @@ func Router(r *gin.Engine) *gin.Engine {
 		interact.GET("/follower/list", ctrlV1.FollowCtrl.FansList) // 获取粉丝列表
 		interact.GET("/follow/list", ctrlV1.FollowCtrl.FollowList) // 获取关注列表
 	}
-	// 视频模块
-	videoGroup := v1ApiGroup.Group("/video")
+	// 存储模块
+	storageGroup := v1ApiGroup.Group("/upload")
 	{
-		// 获取上传视频token
-		videoGroup.GET("/upload/token", middleware.JwtMiddleware, ctrlV1.VideoCtrl.UploadVideoToken)
-		videoGroup.POST("/upload/callback", ctrlV1.VideoCtrl.UploadVideoCallback)
+		storageGroup.GET("/token", middleware.JwtMiddleware, ctrlV1.StorageCtrl.UploadToken)
+		storageGroup.POST("/callback", ctrlV1.StorageCtrl.UploadCallback)
 	}
 
 	return r

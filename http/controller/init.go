@@ -8,6 +8,6 @@ type CenterController struct {
 	TestUserCtrl *v1.TestUserController
 	UserCtrl     *v1.UserController
 	FavoriteCtrl *v1.FavoriteController
-	VideoCtrl    *v1.VideoController
+	StorageCtrl  *v1.StorageController
 	FollowCtrl   *v1.FollowController
 }
