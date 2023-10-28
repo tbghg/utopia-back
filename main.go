@@ -16,9 +16,6 @@ func main() {
 	// 初始化redis
 	initialize.InitRedis()
 
-	// 初始化控制器
-	initialize.InitController()
-
 	// 初始化配置
 	r := gin.New()
 	initialize.InitRoute(r)

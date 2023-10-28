@@ -3,40 +3,50 @@ package router
 import (
 	"github.com/gin-gonic/gin"
 	"utopia-back/http/controller"
+	v12 "utopia-back/http/controller/v1"
 	"utopia-back/http/middleware"
 )
 
 func Router(r *gin.Engine) *gin.Engine {
 
 	v1ApiGroup := r.Group("/api/v1")
-	authGroup := v1ApiGroup.Group("/user")
-	testGroup := v1ApiGroup.Group("/test").Use(middleware.JwtMiddleware)
-	interact := v1ApiGroup.Group("/interact").Use(middleware.JwtMiddleware)
 
-	{
-
-		testGroup.POST("/testUser/add", controller.TestUserCtrl.Add)
-		testGroup.GET("/testUser/select/:id", controller.TestUserCtrl.Select)
-		// 用户鉴权模块
-		{
-			authGroup.POST("/login", controller.UserCtrl.Login)
-			authGroup.POST("/register", controller.UserCtrl.Register)
-		}
-		// 交互模块
-		{
-			interact.POST("/favorite", controller.FavoriteCtrl.Favorite)   // 收藏/取消收藏
-			interact.POST("/follow", controller.FollowCtrl.Follow)         // 关注/取消关注
-			interact.GET("/follower/list", controller.FollowCtrl.FansList) // 获取粉丝列表
-			interact.GET("/follow/list", controller.FollowCtrl.FollowList) // 获取关注列表
-		}
-
+	// 初始化控制器
+	ctrlV1 := controller.CenterController{
+		TestUserCtrl: v12.NewTestUserCtrl(),
+		UserCtrl:     v12.NewUserController(),
+		FavoriteCtrl: v12.NewFavoriteController(),
+		VideoCtrl:    v12.NewVideoController(),
+		FollowCtrl:   v12.NewFollowController(),
 	}
 
+	// 测试模块
+	testGroup := v1ApiGroup.Group("/test").Use(middleware.JwtMiddleware)
+	{
+		testGroup.POST("/testUser/add", ctrlV1.TestUserCtrl.Add)
+		testGroup.GET("/testUser/select/:id", ctrlV1.TestUserCtrl.Select)
+	}
+
+	authGroup := v1ApiGroup.Group("/user")
+	// 用户鉴权模块
+	{
+		authGroup.POST("/login", ctrlV1.UserCtrl.Login)
+		authGroup.POST("/register", ctrlV1.UserCtrl.Register)
+	}
+	interact := v1ApiGroup.Group("/interact").Use(middleware.JwtMiddleware)
+	// 交互模块
+	{
+		interact.POST("/favorite", ctrlV1.FavoriteCtrl.Favorite)   // 收藏/取消收藏
+		interact.POST("/follow", ctrlV1.FollowCtrl.Follow)         // 关注/取消关注
+		interact.GET("/follower/list", ctrlV1.FollowCtrl.FansList) // 获取粉丝列表
+		interact.GET("/follow/list", ctrlV1.FollowCtrl.FollowList) // 获取关注列表
+	}
+	// 视频模块
 	videoGroup := v1ApiGroup.Group("/video")
 	{
 		// 获取上传视频token
-		videoGroup.GET("/upload/token", middleware.JwtMiddleware, controller.VideoCtrl.UploadVideoToken)
-		videoGroup.POST("/upload/callback", controller.VideoCtrl.UploadVideoCallback)
+		videoGroup.GET("/upload/token", middleware.JwtMiddleware, ctrlV1.VideoCtrl.UploadVideoToken)
+		videoGroup.POST("/upload/callback", ctrlV1.VideoCtrl.UploadVideoCallback)
 	}
 
 	return r

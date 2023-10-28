@@ -5,19 +5,20 @@ import (
 	"net/http"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
+	v1 "utopia-back/service/implement/v1"
 )
 
 type FollowController struct {
-	Service abstract.FollowService
+	FollowService abstract.FollowService
 }
 
-func NewFollowController(service abstract.FollowService) *FollowController {
-	return &FollowController{Service: service}
+func NewFollowController() *FollowController {
+	return &FollowController{FollowService: v1.NewFollowService()}
 }
 
 type followRequest struct {
-	toUserId   int `form:"to_user_id" validate:"required,gt=0"` // 要关注的用户id > 0 必需
-	actionType int `form:"action_type" validate:"required"`     // 操作类型 1: 关注 2: 取消关注
+	ToUserId   int `json:"to_user_id" validate:"required,gt=0"` // 要关注的用户id > 0 必需
+	ActionType int `json:"action_type" validate:"required"`     // 操作类型 1: 关注 2: 取消关注
 }
 
 // Follow 关注/取消关注
@@ -46,7 +47,7 @@ func (f *FollowController) Follow(c *gin.Context) {
 	}
 
 	// 接收参数并绑定
-	if err = c.ShouldBindQuery(&r); err != nil {
+	if err = c.ShouldBindJSON(&r); err != nil {
 		return
 	}
 	// 参数校验
@@ -54,11 +55,11 @@ func (f *FollowController) Follow(c *gin.Context) {
 		return
 	}
 	// 判断操作类型
-	switch r.actionType {
+	switch r.ActionType {
 	case 1:
-		err = f.Service.Follow(uint(userId), uint(r.toUserId))
+		err = f.FollowService.Follow(uint(userId), uint(r.ToUserId))
 	case 2:
-		err = f.Service.UnFollow(uint(userId), uint(r.toUserId))
+		err = f.FollowService.UnFollow(uint(userId), uint(r.ToUserId))
 	default:
 		err = ActionTypeInvalidError
 	}
@@ -93,7 +94,7 @@ func (f *FollowController) FansList(c *gin.Context) {
 		return
 	}
 
-	list, err := f.Service.GetFansList(uint(userId))
+	list, err := f.FollowService.GetFansList(uint(userId))
 	if err != nil {
 		return
 	}
@@ -126,7 +127,7 @@ func (f *FollowController) FollowList(c *gin.Context) {
 		return
 	}
 
-	list, err := f.Service.GetFollowList(uint(userId))
+	list, err := f.FollowService.GetFollowList(uint(userId))
 	if err != nil {
 		return
 	}

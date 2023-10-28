@@ -6,17 +6,24 @@ import (
 	"os"
 	"path"
 	"utopia-back/database/abstract"
+	"utopia-back/database/implement"
 	"utopia-back/model"
 	utils "utopia-back/pkg/util"
 )
 
 type UserService struct {
-	Dal abstract.UserDal
+	UserDal abstract.UserDal
+}
+
+func NewUserService() *UserService {
+	return &UserService{
+		UserDal: &implement.UserDal{},
+	}
 }
 
 func (u *UserService) GetUserInfo(id uint) (userInfo model.UserInfo, err error) {
 
-	return u.Dal.GetUserInfoById(id)
+	return u.UserDal.GetUserInfoById(id)
 }
 
 var (
@@ -27,7 +34,7 @@ var (
 
 func (u *UserService) Login(username string, password string) (token string, id uint, err error) {
 	// 检查用户是否存在
-	user, err := u.Dal.GetUserByUsername(username)
+	user, err := u.UserDal.GetUserByUsername(username)
 	if err != nil {
 		return "", 0, ErrorUserNotExists
 	}
@@ -41,7 +48,7 @@ func (u *UserService) Login(username string, password string) (token string, id 
 
 func (u *UserService) Register(username string, password string) (token string, id uint, err error) {
 	// 检查用户是否存在
-	_, err = u.Dal.GetUserByUsername(username)
+	_, err = u.UserDal.GetUserByUsername(username)
 	if err == nil {
 		return "", 0, ErrorUserExists
 	}
@@ -69,7 +76,7 @@ func (u *UserService) Register(username string, password string) (token string, 
 	err = os.Remove(nativeAvatarPath) // 删除本地头像
 
 	// 创建用户
-	id, err = u.Dal.CreateUser(&user)
+	id, err = u.UserDal.CreateUser(&user)
 	if err != nil {
 		return "", 0, err
 	}

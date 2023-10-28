@@ -5,14 +5,17 @@ import (
 	"net/http"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
+	v1 "utopia-back/service/implement/v1"
 )
 
 type UserController struct {
-	Service abstract.UserService
+	UserService abstract.UserService
 }
 
-func NewUserController(s abstract.UserService) *UserController {
-	return &UserController{Service: s}
+func NewUserController() *UserController {
+	return &UserController{
+		UserService: v1.NewUserService(),
+	}
 }
 
 type authData struct {
@@ -50,7 +53,7 @@ func (u *UserController) Login(c *gin.Context) {
 		return
 	}
 	// 登录
-	token, id, err := u.Service.Login(r.Username, r.Password)
+	token, id, err := u.UserService.Login(r.Username, r.Password)
 	if err != nil {
 		return
 	}
@@ -92,7 +95,7 @@ func (u *UserController) Register(c *gin.Context) {
 		return
 	}
 	// 注册
-	token, id, err := u.Service.Register(r.Username, r.Password)
+	token, id, err := u.UserService.Register(r.Username, r.Password)
 	if err != nil {
 		return
 	}

@@ -9,14 +9,15 @@ import (
 	"utopia-back/config"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
+	v1 "utopia-back/service/implement/v1"
 )
 
 type VideoController struct {
-	Service abstract.VideoService
+	VideoService abstract.VideoService
 }
 
-func NewVideoController(s abstract.VideoService) *VideoController {
-	return &VideoController{Service: s}
+func NewVideoController() *VideoController {
+	return &VideoController{VideoService: v1.NewVideoService()}
 }
 
 type uploadVideoTokenData struct {
@@ -94,7 +95,7 @@ func (v *VideoController) UploadVideoCallback(c *gin.Context) {
 		})
 		return
 	}
-	err = v.Service.UploadVideoCallback(authorId, url, r.CoverUrl, r.Describe, videoType)
+	err = v.VideoService.UploadVideoCallback(authorId, url, r.CoverUrl, r.Describe, videoType)
 	if err != nil {
 		return
 	}

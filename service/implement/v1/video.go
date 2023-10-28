@@ -2,12 +2,19 @@ package v1
 
 import (
 	"utopia-back/database/abstract"
+	"utopia-back/database/implement"
 	"utopia-back/model"
 	abstract2 "utopia-back/service/abstract"
 )
 
 type VideoService struct {
-	Dal abstract.VideoDal
+	VideoDal abstract.VideoDal
+}
+
+func NewVideoService() *VideoService {
+	return &VideoService{
+		VideoDal: &implement.VideoImpl{},
+	}
 }
 
 // 实现接口
@@ -21,7 +28,7 @@ func (v *VideoService) UploadVideoCallback(authorId uint, url string, coverUrl s
 		VideoType: videoType,
 		Describe:  describe,
 	}
-	_, err = v.Dal.CreateVideo(video)
+	_, err = v.VideoDal.CreateVideo(video)
 	if err != nil {
 		return err
 	}

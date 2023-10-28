@@ -3,19 +3,16 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"strconv"
-	"utopia-back/database/implement"
 	"utopia-back/service/implement/v1"
 )
 
 type TestUserController struct {
-	Service *v1.TestUserService
+	TestUserService *v1.TestUserService
 }
 
 func NewTestUserCtrl() *TestUserController {
 	return &TestUserController{
-		Service: &v1.TestUserService{
-			Dal: &implement.TestUserImpl{},
-		},
+		TestUserService: v1.NewTestUserService(),
 	}
 }
 
@@ -26,7 +23,7 @@ func (t *TestUserController) Add(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	id, err := t.Service.Add(name, ageInt)
+	id, err := t.TestUserService.Add(name, ageInt)
 	if err != nil {
 		c.JSON(200, gin.H{"message": err.Error()})
 		return
@@ -40,7 +37,7 @@ func (t *TestUserController) Select(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	user, err := t.Service.Select(uint(idInt))
+	user, err := t.TestUserService.Select(uint(idInt))
 	if err != nil {
 		c.JSON(200, gin.H{"message": err.Error()})
 		return

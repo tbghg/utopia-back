@@ -6,19 +6,22 @@ import (
 	"utopia-back/pkg/logger"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
+	v1 "utopia-back/service/implement/v1"
 )
 
 type FavoriteController struct {
 	FavoriteService abstract.FavoriteService
 }
 
-func NewFavoriteController(service abstract.FavoriteService) *FavoriteController {
-	return &FavoriteController{FavoriteService: service}
+func NewFavoriteController() *FavoriteController {
+	return &FavoriteController{
+		FavoriteService: v1.NewFavoriteService(),
+	}
 }
 
 type favoriteRequest struct {
-	VideoId    int `form:"video_id" validate:"required,gt=0"` // 视频id > 0 必需
-	ActionType int `form:"action_type" validate:"required"`   // 操作类型 1: 添加收藏 2: 取消收藏
+	VideoId    int `json:"video_id" validate:"required,gt=0"` // 视频id > 0 必需
+	ActionType int `json:"action_type" validate:"required"`   // 操作类型 1: 添加收藏 2: 取消收藏
 }
 
 // Favorite 添加/取消 收藏
@@ -49,7 +52,7 @@ func (f *FavoriteController) Favorite(c *gin.Context) {
 	}
 
 	// 接收参数并绑定
-	if err = c.ShouldBindQuery(&r); err != nil {
+	if err = c.ShouldBindJSON(&r); err != nil {
 		return
 	}
 	// 参数校验
