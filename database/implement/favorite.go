@@ -1,6 +1,7 @@
 package implement
 
 import (
+	"gorm.io/gorm/clause"
 	"utopia-back/database"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
@@ -9,16 +10,27 @@ import (
 type FavoriteDal struct{}
 
 func (f FavoriteDal) AddFavorite(userId uint, videoId uint) (err error) {
-	res := database.DB.Create(&model.Favorite{
+	favorite := model.Favorite{
 		UserID:  userId,
 		VideoID: videoId,
-	})
+		Status:  true,
+	}
+	// 存在则更新，不存在则插入
+	res := database.DB.Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "userId"}, {Name: "videoId"}},
+		DoUpdates: clause.Assignments(map[string]interface{}{"status": favorite.Status}),
+	}).Create(&favorite)
 	return res.Error
 
 }
 
-func (f FavoriteDal) DeleteFavorite(userId uint, video uint) (err error) {
-	res := database.DB.Where("user_id = ? AND video_id = ?", userId, video).Delete(&model.Favorite{})
+func (f FavoriteDal) CancelFavorite(userId uint, video uint) (err error) {
+	favorite := model.Favorite{
+		UserID:  userId,
+		VideoID: video,
+		Status:  false,
+	}
+	res := database.DB.Model(&favorite).Where("user_id = ? AND video_id = ?", userId, video).Update("status", favorite.Status)
 	return res.Error
 }
 

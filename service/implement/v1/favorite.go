@@ -1,15 +1,14 @@
 package v1
 
 import (
-	"strconv"
 	"utopia-back/database/abstract"
 	"utopia-back/database/implement"
-	"utopia-back/pkg/redis"
 	abstract2 "utopia-back/service/abstract"
 )
 
 type FavoriteService struct {
 	FavoriteDal abstract.FavoriteDal
+	VideoDal    abstract.VideoDal
 }
 
 func NewFavoriteService() *FavoriteService {
@@ -21,39 +20,24 @@ func NewFavoriteService() *FavoriteService {
 // 实现接口
 var _ abstract2.FavoriteService = (*FavoriteService)(nil)
 
-func (f FavoriteService) AddFavorite(userId uint, articleId uint) (err error) {
-	return f.FavoriteDal.AddFavorite(userId, articleId)
-}
-
-func (f FavoriteService) DeleteFavorite(userId uint, video uint) (err error) {
-	return f.FavoriteDal.DeleteFavorite(userId, video)
-}
-
-func (f FavoriteService) GetFavoriteList(userId uint) (list []uint, err error) {
-	return f.FavoriteDal.GetFavoriteList(userId)
-}
-
-func (f FavoriteService) IsFavorite(userId uint, videoId uint) (isFavorite bool, err error) {
-	// 构造key
-	key := "favorite:" + "isFavorite:" + strconv.Itoa(int(userId)) + ":" + strconv.Itoa(int(videoId))
-	// 缓存
-	res, err := redis.Cache(func() (interface{}, error) { return f.FavoriteDal.IsFavorite(userId, videoId) }, key, redis.TypeBool)
-	// 返回结果
-	if err != nil {
-		return false, err
+// AddFavorite 添加收藏
+func (f FavoriteService) AddFavorite(userId uint, videoId uint) (err error) {
+	// 判断video是否存在
+	exist, err := f.VideoDal.IsVideoExist(videoId)
+	if err != nil || !exist {
+		return err
 	}
-	return res.(bool), nil
-
+	// 添加收藏
+	return f.FavoriteDal.AddFavorite(userId, videoId)
 }
 
-func (f FavoriteService) GetFavoriteCount(videoId uint) (count int64, err error) {
-	// 构造key
-	key := "favorite:count:" + strconv.Itoa(int(videoId))
-	// 缓存层取数据
-	res, err := redis.Cache(func() (interface{}, error) { return f.FavoriteDal.GetFavoriteCount(videoId) }, key, redis.TypeInt64)
-	// 返回结果
-	if err != nil {
-		return 0, err
+// CancelFavorite  取消收藏
+func (f FavoriteService) CancelFavorite(userId uint, videoId uint) (err error) {
+	// 判断video是否存在
+	exist, err := f.VideoDal.IsVideoExist(videoId)
+	if err != nil || !exist {
+		return err
 	}
-	return res.(int64), nil
+	// 取消收藏
+	return f.FavoriteDal.CancelFavorite(userId, videoId)
 }

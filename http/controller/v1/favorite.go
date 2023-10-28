@@ -64,7 +64,7 @@ func (f *FavoriteController) Favorite(c *gin.Context) {
 	case 1:
 		err = f.FavoriteService.AddFavorite(uint(userID), uint(r.VideoId))
 	case 2:
-		err = f.FavoriteService.DeleteFavorite(uint(userID), uint(r.VideoId))
+		err = f.FavoriteService.CancelFavorite(uint(userID), uint(r.VideoId))
 	default:
 		err = ActionTypeInvalidError
 	}

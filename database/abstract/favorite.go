@@ -3,8 +3,8 @@ package abstract
 type FavoriteDal interface {
 	// AddFavorite 添加收藏
 	AddFavorite(userId uint, videoId uint) (err error)
-	// DeleteFavorite 删除收藏
-	DeleteFavorite(userId uint, video uint) (err error)
+	// CancelFavorite  取消收藏
+	CancelFavorite(userId uint, video uint) (err error)
 	// GetFavoriteList 获取收藏列表
 	GetFavoriteList(userId uint) (list []uint, err error)
 	// IsFavorite 是否收藏
