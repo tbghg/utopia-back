@@ -14,6 +14,7 @@ type FavoriteService struct {
 func NewFavoriteService() *FavoriteService {
 	return &FavoriteService{
 		FavoriteDal: &implement.FavoriteDal{},
+		VideoDal:    &implement.VideoDal{},
 	}
 }
 
