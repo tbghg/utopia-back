@@ -98,10 +98,10 @@ func (f *FollowController) FansList(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	c.JSON(http.StatusOK, &ResponseWithData{
-		Code: SuccessCode,
-		Msg:  "ok",
-		Data: list,
+	c.JSON(http.StatusOK, &FollowResponse{
+		Code:     SuccessCode,
+		Msg:      "ok",
+		UserList: list,
 	})
 }
 
@@ -131,9 +131,9 @@ func (f *FollowController) FollowList(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	c.JSON(http.StatusOK, &ResponseWithData{
-		Code: SuccessCode,
-		Msg:  "ok",
-		Data: list,
+	c.JSON(http.StatusOK, &FollowResponse{
+		Code:     SuccessCode,
+		Msg:      "ok",
+		UserList: list,
 	})
 }

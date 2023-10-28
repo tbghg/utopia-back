@@ -1,6 +1,15 @@
 package v3
 
-import "errors"
+import (
+	"errors"
+	"utopia-back/model"
+)
+
+type FollowResponse struct {
+	Code     int              `json:"code"`
+	Msg      string           `json:"msg"`
+	UserList []model.UserInfo `json:"user_list"`
+}
 
 type ResponseWithData struct {
 	Code int         `json:"code"`
