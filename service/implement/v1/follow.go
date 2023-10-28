@@ -16,6 +16,7 @@ type FollowService struct {
 func NewFollowService() *FollowService {
 	return &FollowService{
 		FollowDal: &implement.FollowDal{},
+		UserDal:   &implement.UserDal{},
 	}
 }
 
