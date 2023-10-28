@@ -1,6 +1,7 @@
 package implement
 
 import (
+	"gorm.io/gorm/clause"
 	"utopia-back/database"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
@@ -11,15 +12,20 @@ type FollowDal struct{}
 var _ abstract.FollowDal = (*FollowDal)(nil)
 
 func (f *FollowDal) Follow(userId uint, followId uint) (err error) {
-	res := database.DB.Create(&model.Follow{
+	res := database.DB.Clauses(
+		clause.OnConflict{
+			Columns:   []clause.Column{{Name: "user_id"}, {Name: "follow_id"}},
+			DoUpdates: clause.Assignments(map[string]interface{}{"status": true}),
+		}).Create(&model.Follow{
 		UserID: userId,
 		FunID:  followId,
+		Status: true,
 	})
 	return res.Error
 }
 
 func (f *FollowDal) UnFollow(userId uint, followId uint) (err error) {
-	res := database.DB.Where("user_id = ? AND follow_id = ?", userId, followId).Delete(&model.Follow{})
+	res := database.DB.Model(&model.Follow{}).Where("user_id = ? AND fun_id = ?", userId, followId).Update("status", false)
 	return res.Error
 }
 

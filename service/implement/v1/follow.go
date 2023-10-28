@@ -1,16 +1,16 @@
 package v1
 
 import (
-	"strconv"
+	"errors"
 	"utopia-back/database/abstract"
 	"utopia-back/database/implement"
 	"utopia-back/model"
-	"utopia-back/pkg/redis"
 	abstract2 "utopia-back/service/abstract"
 )
 
 type FollowService struct {
 	FollowDal abstract.FollowDal
+	UserDal   abstract.UserDal
 }
 
 func NewFollowService() *FollowService {
@@ -23,46 +23,39 @@ func (f FollowService) GetFollowList(userId uint) (list []model.UserInfo, err er
 	return f.FollowDal.GetFollowList(userId)
 }
 
+var ErrUserNotExist = errors.New("用户不存在")
+
 // Follow 关注
 func (f FollowService) Follow(userId uint, followId uint) (err error) {
+	// 判断followId是否存在
+	user, err := f.UserDal.GetUserById(followId)
+	if err != nil {
+		return err
+	}
+	if user.ID == 0 {
+		return ErrUserNotExist
+	}
+	// 关注
 	return f.FollowDal.Follow(userId, followId)
 }
 
 // UnFollow 取消关注
 func (f FollowService) UnFollow(userId uint, followId uint) (err error) {
+	// 判断followId是否存在
+	user, err := f.UserDal.GetUserById(followId)
+	if err != nil {
+		return err
+	}
+	if user.ID == 0 {
+		return ErrUserNotExist
+	}
+	// 取消关注
 	return f.FollowDal.UnFollow(userId, followId)
 }
 
 // GetFansList 获取粉丝列表
 func (f FollowService) GetFansList(userId uint) (list []model.UserInfo, err error) {
 	return f.FollowDal.GetFansList(userId)
-}
-
-// IsFollow 是否关注
-func (f FollowService) IsFollow(userId uint, followId uint) (isFollow bool, err error) {
-	// 构造key
-	key := "follow:" + "isFollow:" + strconv.Itoa(int(userId)) + ":" + strconv.Itoa(int(followId))
-	// 缓存
-	res, err := redis.Cache(func() (interface{}, error) { return f.FollowDal.IsFollow(userId, followId) }, key, redis.TypeBool)
-	// 返回结果
-	if err != nil {
-		return false, err
-	}
-	return res.(bool), nil
-}
-
-// GetFollowCount 获取关注数
-func (f FollowService) GetFollowCount(userId uint) (count int64, err error) {
-	// 构造key
-	key := "follow:count:" + strconv.Itoa(int(userId))
-	// 缓存层取数据
-	res, err := redis.Cache(func() (interface{}, error) { return f.FollowDal.GetFollowCount(userId) }, key, redis.TypeInt64)
-	// 返回结果
-	if err != nil {
-		return 0, err
-	}
-	return res.(int64), nil
-
 }
 
 var _ abstract2.FollowService = (*FollowService)(nil)

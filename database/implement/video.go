@@ -21,5 +21,9 @@ func (v *VideoDal) IsVideoExist(videoId uint) (exist bool, err error) {
 	if res.Error != nil {
 		return false, res.Error
 	}
+	if res.RowsAffected == 0 {
+		return false, nil
+	}
+
 	return true, nil
 }
