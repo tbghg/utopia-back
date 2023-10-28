@@ -3,6 +3,7 @@ package controller
 import (
 	v1 "utopia-back/http/controller/v1"
 	v2 "utopia-back/http/controller/v2"
+	v3 "utopia-back/http/controller/v3"
 )
 
 type CenterControllerV1 struct {
@@ -15,4 +16,8 @@ type CenterControllerV1 struct {
 
 type CenterControllerV2 struct {
 	FollowCtrl *v2.FollowController
+}
+
+type CenterControllerV3 struct {
+	FollowCtrl *v3.FollowController
 }
