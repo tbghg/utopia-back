@@ -1,11 +1,11 @@
-package v1
+package v3
 
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
-	v1 "utopia-back/service/implement/v1"
+	v3 "utopia-back/service/implement/v2"
 )
 
 type FollowController struct {
@@ -13,7 +13,7 @@ type FollowController struct {
 }
 
 func NewFollowController() *FollowController {
-	return &FollowController{FollowService: v1.NewFollowService()}
+	return &FollowController{FollowService: v3.NewFollowService()}
 }
 
 type followRequest struct {

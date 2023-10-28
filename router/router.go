@@ -5,6 +5,7 @@ import (
 	"utopia-back/http/controller"
 	v12 "utopia-back/http/controller/v1"
 	v2 "utopia-back/http/controller/v2"
+	v3 "utopia-back/http/controller/v3"
 	"utopia-back/http/middleware"
 )
 
@@ -61,6 +62,21 @@ func Router(r *gin.Engine) *gin.Engine {
 			interact.POST("/follow", ctrlV2.FollowCtrl.Follow)         // 关注/取消关注
 			interact.GET("/follower/list", ctrlV2.FollowCtrl.FansList) // 获取粉丝列表
 			interact.GET("/follow/list", ctrlV2.FollowCtrl.FollowList) // 获取关注列表
+		}
+	}
+
+	v3ApiGroup := r.Group("/api/v3")
+	{
+		// 初始化控制器
+		ctrlV3 := controller.CenterControllerV3{
+			FollowCtrl: v3.NewFollowController(),
+		}
+		// 交互模块
+		interact := v3ApiGroup.Group("/interact").Use(middleware.JwtMiddleware)
+		{
+			interact.POST("/follow", ctrlV3.FollowCtrl.Follow)         // 关注/取消关注
+			interact.GET("/follower/list", ctrlV3.FollowCtrl.FansList) // 获取粉丝列表
+			interact.GET("/follow/list", ctrlV3.FollowCtrl.FollowList) // 获取关注列表
 		}
 	}
 
