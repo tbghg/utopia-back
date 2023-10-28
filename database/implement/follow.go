@@ -9,8 +9,6 @@ import (
 
 type FollowDal struct{}
 
-var _ abstract.FollowDal = (*FollowDal)(nil)
-
 func (f *FollowDal) Follow(userId uint, followId uint) (err error) {
 	res := database.DB.Clauses(
 		clause.OnConflict{
@@ -77,6 +75,26 @@ func (f *FollowDal) GetFollowCount(userId uint) (count int64, err error) {
 
 func (f *FollowDal) GetFansCount(userId uint) (count int64, err error) {
 	var follow model.Follow
-	res := database.DB.Where("follow_id = ?", userId).Find(&follow).Count(&count)
+	res := database.DB.Where("fun_id = ?", userId).Find(&follow).Count(&count)
 	return count, res.Error
 }
+
+// GetFansIdList 获取粉丝id列表
+func (f *FollowDal) GetFansIdList(userId uint) (fansIdList []uint, err error) {
+	res := database.DB.Model(&model.Follow{}).Select("fun_id").Where("user_id = ?", userId).Find(&fansIdList)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return fansIdList, nil
+}
+
+// GetFollowIdList 获取自己关注的用户id列表
+func (f *FollowDal) GetFollowIdList(userId uint) (followIdList []uint, err error) {
+	res := database.DB.Model(&model.Follow{}).Select("user_id").Where("fun_id = ?", userId).Find(&followIdList)
+	if res.Error != nil {
+		return nil, res.Error
+	}
+	return followIdList, nil
+}
+
+var _ abstract.FollowDal = (*FollowDal)(nil)
