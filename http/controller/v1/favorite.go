@@ -73,6 +73,6 @@ func (f *FavoriteController) Favorite(c *gin.Context) {
 	}
 
 	// 成功添加收藏
-	c.JSON(200, SuccessResponse)
+	c.JSON(http.StatusOK, SuccessResponse)
 
 }

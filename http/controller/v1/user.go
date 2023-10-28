@@ -59,7 +59,7 @@ func (u *UserController) Login(c *gin.Context) {
 	}
 
 	// 成功登录
-	c.JSON(200, &ResponseWithData{
+	c.JSON(http.StatusOK, &ResponseWithData{
 		Code: SuccessCode,
 		Msg:  "ok",
 		Data: authData{
