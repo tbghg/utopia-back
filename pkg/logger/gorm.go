@@ -42,21 +42,21 @@ func (g GormLogger) Info(ctx context.Context, s string, i ...interface{}) {
 		return
 	}
 
-	g.logger().Sugar().Infof(s, i...)
+	g.logger().Sugar().With(ctx).Infof(s, i...)
 }
 
 func (g GormLogger) Warn(ctx context.Context, s string, i ...interface{}) {
 	if g.logLevel < gormLogger.Warn {
 		return
 	}
-	g.logger().Sugar().Warnf(s, i...)
+	g.logger().Sugar().With(ctx).Warnf(s, i...)
 }
 
 func (g GormLogger) Error(ctx context.Context, s string, i ...interface{}) {
 	if g.logLevel < gormLogger.Error {
 		return
 	}
-	g.logger().Sugar().Errorf(s, i...)
+	g.logger().Sugar().With(ctx).Errorf(s, i...)
 }
 
 func (g GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {
@@ -88,8 +88,10 @@ func (g GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql s
 		g.logger().Warn("slow query", fields...)
 	}
 
-	//正常查询
-	g.logger().Debug("query", fields...)
+	//只有在Info级别才打印所有的sql
+	if g.logLevel >= gormLogger.Info {
+		g.logger().Debug("every query", fields...)
+	}
 
 }
 

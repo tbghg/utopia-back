@@ -30,7 +30,7 @@ func Init() error {
 
 	// 连接数据库
 	db, err := gorm.Open(mysql.Open(cfg.FormatDSN()), &gorm.Config{
-		Logger: logger.NewGormLogger(logger.Logger, gormLogger.Info),
+		Logger: logger.NewGormLogger(logger.Logger, gormLogger.Warn),
 	})
 	if err != nil {
 		return err
