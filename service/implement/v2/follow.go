@@ -2,6 +2,7 @@ package v2
 
 import (
 	"errors"
+	"fmt"
 	"gorm.io/gorm"
 	"utopia-back/database/abstract"
 	"utopia-back/database/implement"
@@ -84,12 +85,12 @@ func (f FollowService) getUserInfoList(fansIdList []uint) (list []model.UserInfo
 	followCountMapChan := make(chan map[uint]int64)
 	errChan := make(chan error)
 
-	// 根据粉丝id列表获取粉丝信息列表
+	// 根据用户id列表的获取用户信息
 	go func() {
 		for _, fansId := range fansIdList {
 			user, err := f.UserDal.GetUserById(fansId)
 			if err != nil {
-				errChan <- err
+				errChan <- errors.New(fmt.Sprintf("获取该用户信息失败, 用户id：%v, 错误原因：%v", fansId, err))
 				return
 			}
 			userMap[fansId] = user
@@ -97,24 +98,24 @@ func (f FollowService) getUserInfoList(fansIdList []uint) (list []model.UserInfo
 		userMapChan <- userMap
 	}()
 
-	// 根据粉丝id列表获取粉丝的关注数
+	// 根据用户id列表的获取关注数
 	go func() {
 		for _, fansId := range fansIdList {
 			followCount, err := f.FollowDal.GetFollowCount(fansId)
 			if err != nil {
-				errChan <- err
+				errChan <- errors.New(fmt.Sprintf("获取该用户关注数失败, 用户id：%v, 错误原因：%v", fansId, err))
 				return
 			}
 			followCountMap[fansId] = followCount
 		}
 		followCountMapChan <- followCountMap
 	}()
-	// 根据粉丝id列表获取粉丝的粉丝数
+	// 根据用户id列表的获取粉丝数
 	go func() {
 		for _, fansId := range fansIdList {
 			fansCount, err := f.FollowDal.GetFansCount(fansId)
 			if err != nil {
-				errChan <- err
+				errChan <- errors.New(fmt.Sprintf("获取该用户粉丝数失败, 用户id：%v, 错误原因：%v", fansId, err))
 				return
 			}
 			fansCountMap[fansId] = fansCount
@@ -134,14 +135,16 @@ func (f FollowService) getUserInfoList(fansIdList []uint) (list []model.UserInfo
 
 	// 将粉丝信息列表、粉丝的关注数、粉丝的粉丝数合并到一起
 	var userInfoMap = make(map[uint]model.UserInfo)
-	for fansId, userInfo := range userInfoMap {
-		userInfo.ID = fansId
-		userInfo.Username = userMap[fansId].Username
-		userInfo.Nickname = userMap[fansId].Nickname
-		userInfo.Avatar = userMap[fansId].Avatar
-		userInfo.FansCount = fansCountMap[fansId]
-		userInfo.FollowCount = followCountMap[fansId]
-		list = append(list, userInfo)
+	for _, id := range fansIdList {
+		userInfoMap[id] = model.UserInfo{
+			ID:          id,
+			Avatar:      userMap[id].Avatar,
+			Nickname:    userMap[id].Nickname,
+			Username:    userMap[id].Username,
+			FollowCount: followCountMap[id],
+			FansCount:   fansCountMap[id],
+		}
+		list = append(list, userInfoMap[id])
 	}
 	return list, nil
 }
