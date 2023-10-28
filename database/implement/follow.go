@@ -81,7 +81,7 @@ func (f *FollowDal) GetFansCount(userId uint) (count int64, err error) {
 
 // GetFansIdList 获取粉丝id列表
 func (f *FollowDal) GetFansIdList(userId uint) (fansIdList []uint, err error) {
-	res := database.DB.Model(&model.Follow{}).Select("fun_id").Where("user_id = ?", userId).Find(&fansIdList)
+	res := database.DB.Model(&model.Follow{}).Select("user_id").Where("fun_id = ?", userId).Find(&fansIdList)
 	if res.Error != nil {
 		return nil, res.Error
 	}
@@ -90,7 +90,7 @@ func (f *FollowDal) GetFansIdList(userId uint) (fansIdList []uint, err error) {
 
 // GetFollowIdList 获取自己关注的用户id列表
 func (f *FollowDal) GetFollowIdList(userId uint) (followIdList []uint, err error) {
-	res := database.DB.Model(&model.Follow{}).Select("user_id").Where("fun_id = ?", userId).Find(&followIdList)
+	res := database.DB.Model(&model.Follow{}).Select("fun_id").Where("user_id = ?", userId).Find(&followIdList)
 	if res.Error != nil {
 		return nil, res.Error
 	}
