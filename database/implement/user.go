@@ -29,7 +29,7 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 	userInfo.FollowCount = followCount
 	// 获取用户的粉丝数
 	var fansCount int64
-	res = database.DB.Model(&model.Follow{}).Where("fun_id = ?", id).Count(&fansCount)
+	res = database.DB.Model(&model.Follow{}).Where("follow_id = ?", id).Count(&fansCount)
 	if res.Error != nil {
 		return userInfo, res.Error
 	}
