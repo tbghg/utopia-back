@@ -12,12 +12,6 @@ type UserController struct {
 	UserService abstract.UserService
 }
 
-//func NewUserController() *UserController {
-//	return &UserController{
-//		UserService: v1.NewUserService(),
-//	}
-//}
-
 type authData struct {
 	Token  string `json:"token"`
 	UserId int    `json:"user_id"`

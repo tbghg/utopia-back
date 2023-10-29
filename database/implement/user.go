@@ -1,12 +1,13 @@
 package implement
 
 import (
-	"utopia-back/database"
+	"gorm.io/gorm"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
 )
 
 type UserDal struct {
+	Db *gorm.DB
 }
 
 func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) {
@@ -22,21 +23,21 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 	userInfo.Avatar = user.Avatar
 	// 获取用户的关注数
 	var followCount int64
-	res := database.DB.Model(&model.Follow{}).Where("user_id = ?", id).Count(&followCount)
+	res := u.Db.Model(&model.Follow{}).Where("user_id = ?", id).Count(&followCount)
 	if res.Error != nil {
 		return userInfo, res.Error
 	}
 	userInfo.FollowCount = followCount
 	// 获取用户的粉丝数
 	var fansCount int64
-	res = database.DB.Model(&model.Follow{}).Where("follow_id = ?", id).Count(&fansCount)
+	res = u.Db.Model(&model.Follow{}).Where("follow_id = ?", id).Count(&fansCount)
 	if res.Error != nil {
 		return userInfo, res.Error
 	}
 	userInfo.FansCount = fansCount
 	// 获取用户的视频作品数
 	var videoCount int64
-	res = database.DB.Model(&model.Video{}).Where("author_id = ?", id).Count(&videoCount)
+	res = u.Db.Model(&model.Video{}).Where("author_id = ?", id).Count(&videoCount)
 	if res.Error != nil {
 		return userInfo, res.Error
 	}
@@ -47,7 +48,7 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 }
 
 func (u *UserDal) GetUserByUsername(username string) (user model.User, err error) {
-	res := database.DB.First(&user, "username = ?", username)
+	res := u.Db.First(&user, "username = ?", username)
 	if res.Error != nil {
 		return user, res.Error
 	}
@@ -55,7 +56,7 @@ func (u *UserDal) GetUserByUsername(username string) (user model.User, err error
 }
 
 func (u *UserDal) CreateUser(user *model.User) (id uint, err error) {
-	res := database.DB.Create(&user)
+	res := u.Db.Create(&user)
 	if res.Error != nil {
 		return 0, res.Error
 	}
@@ -63,7 +64,7 @@ func (u *UserDal) CreateUser(user *model.User) (id uint, err error) {
 }
 
 func (u *UserDal) GetUserById(id uint) (user model.User, err error) {
-	res := database.DB.First(&user, "id = ?", id)
+	res := u.Db.First(&user, "id = ?", id)
 	if res.Error != nil {
 		return user, res.Error
 	}
@@ -71,7 +72,7 @@ func (u *UserDal) GetUserById(id uint) (user model.User, err error) {
 }
 
 func (u *UserDal) UpdateAvatar(id uint, avatarUrl string) (err error) {
-	res := database.DB.Model(&model.User{ID: id}).Update("avatar", avatarUrl)
+	res := u.Db.Model(&model.User{ID: id}).Update("avatar", avatarUrl)
 	if res.Error != nil {
 		return res.Error
 	}

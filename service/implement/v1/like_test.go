@@ -2,7 +2,6 @@ package v1
 
 import (
 	"testing"
-	"utopia-back/database"
 	"utopia-back/database/abstract"
 	"utopia-back/database/implement"
 	"utopia-back/pkg/redis"
@@ -10,7 +9,7 @@ import (
 
 func TestLikeService_GetLikeCount(t *testing.T) {
 	// 初始化数据库
-	err := database.TestInit()
+	err := implement.TestInit()
 	if err != nil {
 		t.Errorf("TestInit() error = %v", err)
 	}

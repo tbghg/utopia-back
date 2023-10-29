@@ -11,12 +11,6 @@ type LikeController struct {
 	LikeService abstract.LikeService
 }
 
-//func NewLikeController() *LikeController {
-//	return &LikeController{
-//		LikeService: v1.NewLikeService(),
-//	}
-//}
-
 type likeRequest struct {
 	VideoId    uint `json:"video_id" validate:"required,gt=0"` // 视频id > 0 必需
 	ActionType int  `json:"action_type" validate:"required"`   // 操作类型 1: 点赞 2: 取消点赞

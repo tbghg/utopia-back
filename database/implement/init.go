@@ -1,4 +1,4 @@
-package database
+package implement
 
 import (
 	mysqlCfg "github.com/go-sql-driver/mysql"
@@ -9,10 +9,20 @@ import (
 	"os"
 	"time"
 	"utopia-back/config"
+	"utopia-back/model"
 	"utopia-back/pkg/logger"
 )
 
-var DB *gorm.DB
+var myDb *gorm.DB
+
+type CenterDal struct {
+	FavoriteDal *FavoriteDal
+	UserDal     *UserDal
+	VideoDal    *VideoDal
+	LikeDal     *LikeDal
+	FollowDal   *FollowDal
+	TestUserDal *TestUserDal
+}
 
 func Init() error {
 	// 数据库配置
@@ -36,7 +46,7 @@ func Init() error {
 		return err
 	}
 
-	DB = db
+	myDb = db
 	return nil
 }
 
@@ -70,6 +80,39 @@ func TestInit() error {
 		return err
 	}
 
-	DB = db
+	myDb = db
 	return nil
+}
+
+func InitTable() {
+	// 初始化数据表
+	_ = myDb.AutoMigrate(&model.TestUser{})
+	_ = myDb.AutoMigrate(&model.User{})
+	_ = myDb.AutoMigrate(&model.Video{})
+	_ = myDb.AutoMigrate(&model.Like{})
+	_ = myDb.AutoMigrate(&model.Favorite{})
+	_ = myDb.AutoMigrate(&model.Follow{})
+}
+
+func NewCenterDal() *CenterDal {
+	return &CenterDal{
+		FavoriteDal: &FavoriteDal{
+			Db: myDb,
+		},
+		UserDal: &UserDal{
+			Db: myDb,
+		},
+		VideoDal: &VideoDal{
+			Db: myDb,
+		},
+		LikeDal: &LikeDal{
+			Db: myDb,
+		},
+		FollowDal: &FollowDal{
+			Db: myDb,
+		},
+		TestUserDal: &TestUserDal{
+			Db: myDb,
+		},
+	}
 }

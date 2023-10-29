@@ -2,13 +2,13 @@ package implement
 
 import (
 	"testing"
-	"utopia-back/database"
 )
 
 func TestFollowDal_GetFansList(t *testing.T) {
-	err := database.TestInit()
+	err := TestInit()
 	if err != nil {
-		t.Errorf("TestInit() error = %v", err)
+		t.Errorf("Init() error = %v", err)
+		return
 	}
 
 	type args struct {
@@ -29,7 +29,9 @@ func TestFollowDal_GetFansList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			f := &FollowDal{}
+			f := &FollowDal{
+				Db: myDb,
+			}
 			gotList, err := f.GetFansList(tt.args.userId)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetFansList() error = %v, wantErr %v", err, tt.wantErr)

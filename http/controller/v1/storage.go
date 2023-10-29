@@ -16,9 +16,6 @@ type StorageController struct {
 	StorageService abstract.StorageService
 }
 
-//	func NewStorageController() *StorageController {
-//		return &StorageController{StorageService: v1.NewStorageService()}
-//	}
 type uploadTokenData struct {
 	Token string `json:"token"`
 }

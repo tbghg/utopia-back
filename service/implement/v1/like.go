@@ -15,12 +15,6 @@ type LikeService struct {
 	VideoDal abstract.VideoDal
 }
 
-//func NewLikeService() *LikeService {
-//	return &LikeService{
-//		LikeDal: &implement.LikeDal{},
-//	}
-//}
-
 func (l LikeService) Like(userId uint, videoId uint) (err error) {
 	//判断videoId是否存在
 	err = l.VideoDal.IsVideoExist(videoId)
@@ -34,6 +28,7 @@ func (l LikeService) Like(userId uint, videoId uint) (err error) {
 	}
 	// 更新缓存
 	err = redis.RDB.Incr(redis.Ctx, "like:count:"+strconv.Itoa(int(videoId))).Err()
+
 	if err != nil {
 		return err
 	}

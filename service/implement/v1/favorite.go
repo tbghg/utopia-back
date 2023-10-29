@@ -12,13 +12,6 @@ type FavoriteService struct {
 	VideoDal    abstract.VideoDal
 }
 
-//func NewFavoriteService() *FavoriteService {
-//	return &FavoriteService{
-//		FavoriteDal: &implement.FavoriteDal{},
-//		VideoDal:    &implement.VideoDal{},
-//	}
-//}
-
 // 实现接口
 var _ abstract2.FavoriteService = (*FavoriteService)(nil)
 

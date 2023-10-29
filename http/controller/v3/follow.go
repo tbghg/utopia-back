@@ -12,11 +12,6 @@ type FollowController struct {
 	FollowService abstract.FollowService
 }
 
-//
-//func NewFollowController() *FollowController {
-//	return &FollowController{FollowService: v3.NewFollowService()}
-//}
-
 type followRequest struct {
 	ToUserId   int `json:"to_user_id" validate:"required,gt=0"` // 要关注的用户id > 0 必需
 	ActionType int `json:"action_type" validate:"required"`     // 操作类型 1: 关注 2: 取消关注

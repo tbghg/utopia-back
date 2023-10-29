@@ -10,12 +10,6 @@ type TestUserController struct {
 	TestUserService *v1.TestUserService
 }
 
-//func NewTestUserCtrl() *TestUserController {
-//	return &TestUserController{
-//		TestUserService: v1.NewTestUserService(),
-//	}
-//}
-
 func (t *TestUserController) Add(c *gin.Context) {
 	name := c.PostForm("name")
 	age := c.PostForm("age")

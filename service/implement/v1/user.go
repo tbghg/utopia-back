@@ -14,12 +14,6 @@ type UserService struct {
 	UserDal abstract.UserDal
 }
 
-//func NewUserService() *UserService {
-//	return &UserService{
-//		UserDal: &implement.UserDal{},
-//	}
-//}
-
 func (u *UserService) GetUserInfo(id uint) (userInfo model.UserInfo, err error) {
 
 	return u.UserDal.GetUserInfoById(id)

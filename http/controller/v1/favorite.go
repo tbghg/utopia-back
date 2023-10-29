@@ -13,12 +13,6 @@ type FavoriteController struct {
 	FavoriteService abstract.FavoriteService
 }
 
-//func NewFavoriteController() *FavoriteController {
-//	return &FavoriteController{
-//		FavoriteService: v1.NewFavoriteService(),
-//	}
-//}
-
 type favoriteRequest struct {
 	VideoId    int `json:"video_id" validate:"required,gt=0"` // 视频id > 0 必需
 	ActionType int `json:"action_type" validate:"required"`   // 操作类型 1: 添加收藏 2: 取消收藏

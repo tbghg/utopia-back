@@ -1,15 +1,16 @@
 package implement
 
 import (
-	"utopia-back/database"
+	"gorm.io/gorm"
 	"utopia-back/model"
 )
 
 type VideoDal struct {
+	Db *gorm.DB
 }
 
 func (v *VideoDal) CreateVideo(video *model.Video) (id uint, err error) {
-	res := database.DB.Create(&video)
+	res := v.Db.Create(&video)
 	if res.Error != nil {
 		return 0, res.Error
 	}
@@ -17,7 +18,7 @@ func (v *VideoDal) CreateVideo(video *model.Video) (id uint, err error) {
 }
 
 func (v *VideoDal) IsVideoExist(videoId uint) (err error) {
-	res := database.DB.Where("id = ?", videoId).First(&model.Video{})
+	res := v.Db.Where("id = ?", videoId).First(&model.Video{})
 	if res.Error != nil {
 		return res.Error
 	}

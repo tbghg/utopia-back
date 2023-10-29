@@ -11,13 +11,6 @@ type StorageService struct {
 	UserDal  abstract.UserDal
 }
 
-//func NewStorageService() *StorageService {
-//	return &StorageService{
-//		VideoDal: &implement.VideoDal{},
-//		UserDal:  &implement.UserDal{},
-//	}
-//}
-
 func (v *StorageService) UpdateAvatar(uid uint, url string) error {
 	return v.UserDal.UpdateAvatar(uid, url)
 }
