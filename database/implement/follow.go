@@ -12,7 +12,7 @@ type FollowDal struct{}
 func (f *FollowDal) Follow(userId uint, followId uint) (err error) {
 	res := database.DB.Clauses(
 		clause.OnConflict{
-			Columns:   []clause.Column{{Name: "user_id"}, {Name: "follow_id"}},
+			Columns:   []clause.Column{{Name: "user_id"}, {Name: "fun_id"}},
 			DoUpdates: clause.Assignments(map[string]interface{}{"status": true}),
 		}).Create(&model.Follow{
 		UserID: userId,
@@ -60,7 +60,7 @@ func (f *FollowDal) GetFollowList(userId uint) (list []model.UserInfo, err error
 
 func (f *FollowDal) IsFollow(userId uint, followId uint) (isFollow bool, err error) {
 	var follow model.Follow
-	res := database.DB.Where("user_id = ? AND follow_id = ?", userId, followId).First(&follow)
+	res := database.DB.Where("user_id = ? AND fun_id = ?", userId, followId).First(&follow)
 	if res.Error != nil {
 		return false, res.Error
 	}

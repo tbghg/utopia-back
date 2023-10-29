@@ -59,15 +59,7 @@ func (f FollowService) GetFansList(userId uint) (list []model.UserInfo, err erro
 		return nil, err
 	}
 	// 再根据粉丝id列表获取粉丝信息列表
-	for _, v := range fansIdList {
-		userInfo, err := f.UserDal.GetUserInfoById(v)
-		if err != nil {
-			return nil, err
-		}
-		list = append(list, userInfo)
-	}
-
-	return list, nil
+	return f.getUserInfo(fansIdList)
 }
 
 // GetFollowList 获取关注列表
@@ -79,13 +71,41 @@ func (f FollowService) GetFollowList(userId uint) (list []model.UserInfo, err er
 
 	}
 	// 再根据粉丝id列表获取粉丝信息列表
+	return f.getUserInfo(followIdList)
+}
+
+// getUserInfo 根据id列表获取用户信息列表
+func (f FollowService) getUserInfo(followIdList []uint) (list []model.UserInfo, err error) {
+	// 再根据粉丝id列表获取粉丝信息列表
 	for _, v := range followIdList {
-		userInfo, err := f.UserDal.GetUserInfoById(v)
+		// 根据id获取用户信息
+		users, err := f.UserDal.GetUserById(v)
 		if err != nil {
 			return nil, err
 		}
+		// 获取关注数
+		followCount, err := f.FollowDal.GetFollowCount(v)
+		if err != nil {
+			return nil, err
+		}
+		// 获取粉丝数
+		fansCount, err := f.FollowDal.GetFansCount(v)
+		if err != nil {
+			return nil, err
+		}
+		// 封装用户信息
+		userInfo := model.UserInfo{
+			ID:          users.ID,
+			Username:    users.Username,
+			Nickname:    users.Nickname,
+			Avatar:      users.Avatar,
+			FollowCount: followCount,
+			FansCount:   fansCount,
+		}
 		list = append(list, userInfo)
+
 	}
+	// 	返回结果
 	return list, nil
 }
 

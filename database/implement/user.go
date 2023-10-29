@@ -29,14 +29,14 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 	userInfo.FollowCount = followCount
 	// 获取用户的粉丝数
 	var fansCount int64
-	res = database.DB.Model(&model.Follow{}).Where("follow_id = ?", id).Count(&fansCount)
+	res = database.DB.Model(&model.Follow{}).Where("fun_id = ?", id).Count(&fansCount)
 	if res.Error != nil {
 		return userInfo, res.Error
 	}
 	userInfo.FansCount = fansCount
 	// 获取用户的视频作品数
 	var videoCount int64
-	res = database.DB.Model(&model.Video{}).Where("user_id = ?", id).Count(&videoCount)
+	res = database.DB.Model(&model.Video{}).Where("author_id = ?", id).Count(&videoCount)
 	if res.Error != nil {
 		return userInfo, res.Error
 	}

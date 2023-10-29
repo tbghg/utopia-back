@@ -42,21 +42,21 @@ func (g GormLogger) Info(ctx context.Context, s string, i ...interface{}) {
 		return
 	}
 
-	g.logger().Sugar().With(ctx).Infof(s, i...)
+	g.logger().Sugar().Infof(s, i...)
 }
 
 func (g GormLogger) Warn(ctx context.Context, s string, i ...interface{}) {
 	if g.logLevel < gormLogger.Warn {
 		return
 	}
-	g.logger().Sugar().With(ctx).Warnf(s, i...)
+	g.logger().Sugar().Warnf(s, i...)
 }
 
 func (g GormLogger) Error(ctx context.Context, s string, i ...interface{}) {
 	if g.logLevel < gormLogger.Error {
 		return
 	}
-	g.logger().Sugar().With(ctx).Errorf(s, i...)
+	g.logger().Sugar().Errorf(s, i...)
 }
 
 func (g GormLogger) Trace(ctx context.Context, begin time.Time, fc func() (sql string, rowsAffected int64), err error) {

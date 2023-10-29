@@ -5,7 +5,7 @@ import (
 	"net/http"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
-	v3 "utopia-back/service/implement/v2"
+	v3 "utopia-back/service/implement/v3"
 )
 
 type FollowController struct {
