@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"utopia-back/http/controller/base"
 	"utopia-back/pkg/logger"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
@@ -33,8 +34,8 @@ func (f *FavoriteController) Favorite(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &ResponseWithoutData{
-				Code: ErrorCode,
+			c.JSON(http.StatusOK, &base.ResponseWithoutData{
+				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
 
@@ -47,7 +48,7 @@ func (f *FavoriteController) Favorite(c *gin.Context) {
 	value, ok := c.Get("user_id")
 	userID, ok := value.(int)
 	if !ok {
-		err = UserIDInvalidError
+		err = base.UserIDInvalidError
 		return
 	}
 
@@ -66,13 +67,13 @@ func (f *FavoriteController) Favorite(c *gin.Context) {
 	case 2:
 		err = f.FavoriteService.CancelFavorite(uint(userID), uint(r.VideoId))
 	default:
-		err = ActionTypeInvalidError
+		err = base.ActionTypeInvalidError
 	}
 	if err != nil {
 		return
 	}
 
 	// 成功添加收藏
-	c.JSON(http.StatusOK, SuccessResponse)
+	c.JSON(http.StatusOK, base.SuccessResponse)
 
 }

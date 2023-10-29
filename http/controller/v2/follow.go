@@ -3,6 +3,7 @@ package v2
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"utopia-back/http/controller/base"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
 	v2 "utopia-back/service/implement/v2"
@@ -31,8 +32,8 @@ func (f *FollowController) Follow(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &ResponseWithoutData{
-				Code: ErrorCode,
+			c.JSON(http.StatusOK, &base.ResponseWithoutData{
+				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
 		}
@@ -42,7 +43,7 @@ func (f *FollowController) Follow(c *gin.Context) {
 	value, ok := c.Get("user_id")
 	userId, ok := value.(int)
 	if !ok {
-		err = UserIDInvalidError
+		err = base.UserIDInvalidError
 		return
 	}
 
@@ -61,14 +62,14 @@ func (f *FollowController) Follow(c *gin.Context) {
 	case 2:
 		err = f.FollowService.UnFollow(uint(userId), uint(r.ToUserId))
 	default:
-		err = ActionTypeInvalidError
+		err = base.ActionTypeInvalidError
 	}
 
 	if err != nil {
 		return
 	}
 
-	c.JSON(http.StatusOK, SuccessResponse)
+	c.JSON(http.StatusOK, base.SuccessResponse)
 
 }
 
@@ -79,8 +80,8 @@ func (f *FollowController) FansList(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &ResponseWithoutData{
-				Code: ErrorCode,
+			c.JSON(http.StatusOK, &base.ResponseWithoutData{
+				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
 		}
@@ -90,7 +91,7 @@ func (f *FollowController) FansList(c *gin.Context) {
 	value, ok := c.Get("user_id")
 	userId, ok := value.(int)
 	if !ok {
-		err = UserIDInvalidError
+		err = base.UserIDInvalidError
 		return
 	}
 
@@ -98,8 +99,8 @@ func (f *FollowController) FansList(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	c.JSON(http.StatusOK, &FollowResponse{
-		Code:     SuccessCode,
+	c.JSON(http.StatusOK, &base.FollowResponse{
+		Code:     base.SuccessCode,
 		Msg:      "ok",
 		UserList: list,
 	})
@@ -112,8 +113,8 @@ func (f *FollowController) FollowList(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &ResponseWithoutData{
-				Code: ErrorCode,
+			c.JSON(http.StatusOK, &base.ResponseWithoutData{
+				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
 		}
@@ -123,7 +124,7 @@ func (f *FollowController) FollowList(c *gin.Context) {
 	value, ok := c.Get("user_id")
 	userId, ok := value.(int)
 	if !ok {
-		err = UserIDInvalidError
+		err = base.UserIDInvalidError
 		return
 	}
 
@@ -131,8 +132,8 @@ func (f *FollowController) FollowList(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	c.JSON(http.StatusOK, &FollowResponse{
-		Code:     SuccessCode,
+	c.JSON(http.StatusOK, &base.FollowResponse{
+		Code:     base.SuccessCode,
 		Msg:      "ok",
 		UserList: list,
 	})

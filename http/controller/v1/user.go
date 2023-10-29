@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"utopia-back/http/controller/base"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
 	v1 "utopia-back/service/implement/v1"
@@ -37,8 +38,8 @@ func (u *UserController) Login(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &ResponseWithData{
-				Code: ErrorCode,
+			c.JSON(http.StatusOK, &base.ResponseWithData{
+				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
 		}
@@ -59,8 +60,8 @@ func (u *UserController) Login(c *gin.Context) {
 	}
 
 	// 成功登录
-	c.JSON(http.StatusOK, &ResponseWithData{
-		Code: SuccessCode,
+	c.JSON(http.StatusOK, &base.ResponseWithData{
+		Code: base.SuccessCode,
 		Msg:  "ok",
 		Data: authData{
 			Token:  token,
@@ -79,8 +80,8 @@ func (u *UserController) Register(c *gin.Context) {
 
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &ResponseWithData{
-				Code: ErrorCode,
+			c.JSON(http.StatusOK, &base.ResponseWithData{
+				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
 		}
@@ -100,8 +101,8 @@ func (u *UserController) Register(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, &ResponseWithData{
-		Code: SuccessCode,
+	c.JSON(http.StatusOK, &base.ResponseWithData{
+		Code: base.SuccessCode,
 		Msg:  "ok",
 		Data: authData{
 			Token:  token,

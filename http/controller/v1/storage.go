@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"utopia-back/config"
+	"utopia-back/http/controller/base"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
 	v1 "utopia-back/service/implement/v1"
@@ -44,8 +45,8 @@ const (
 
 func (v *StorageController) UploadToken(c *gin.Context) {
 	upToken := utils.GetCallbackToken()
-	c.JSON(http.StatusOK, &ResponseWithData{
-		Code: SuccessCode,
+	c.JSON(http.StatusOK, &base.ResponseWithData{
+		Code: base.SuccessCode,
 		Msg:  "ok",
 		Data: uploadTokenData{
 			Token: upToken,
@@ -63,8 +64,8 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &ResponseWithoutData{
-				Code: ErrorCode,
+			c.JSON(http.StatusOK, &base.ResponseWithoutData{
+				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
 		}
@@ -96,8 +97,8 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 		}
 	}
 	if r.Type == callbackAvatar || r.Type == callbackCover {
-		c.JSON(http.StatusOK, &ResponseWithData{
-			Code: SuccessCode,
+		c.JSON(http.StatusOK, &base.ResponseWithData{
+			Code: base.SuccessCode,
 			Msg:  "ok",
 			Data: callbackData{
 				ImageUrl: url,
@@ -109,8 +110,8 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 	if err != nil {
 		return
 	}
-	c.JSON(http.StatusOK, &ResponseWithoutData{
-		Code: SuccessCode,
+	c.JSON(http.StatusOK, &base.ResponseWithoutData{
+		Code: base.SuccessCode,
 		Msg:  "ok",
 	})
 
