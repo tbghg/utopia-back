@@ -3,7 +3,6 @@ package v1
 import (
 	"strconv"
 	"utopia-back/database/abstract"
-	"utopia-back/database/implement"
 	"utopia-back/pkg/redis"
 	abstract2 "utopia-back/service/abstract"
 )
@@ -16,11 +15,11 @@ type LikeService struct {
 	VideoDal abstract.VideoDal
 }
 
-func NewLikeService() *LikeService {
-	return &LikeService{
-		LikeDal: &implement.LikeDal{},
-	}
-}
+//func NewLikeService() *LikeService {
+//	return &LikeService{
+//		LikeDal: &implement.LikeDal{},
+//	}
+//}
 
 func (l LikeService) Like(userId uint, videoId uint) (err error) {
 	//判断videoId是否存在

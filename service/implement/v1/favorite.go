@@ -4,7 +4,6 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"utopia-back/database/abstract"
-	"utopia-back/database/implement"
 	abstract2 "utopia-back/service/abstract"
 )
 
@@ -13,12 +12,12 @@ type FavoriteService struct {
 	VideoDal    abstract.VideoDal
 }
 
-func NewFavoriteService() *FavoriteService {
-	return &FavoriteService{
-		FavoriteDal: &implement.FavoriteDal{},
-		VideoDal:    &implement.VideoDal{},
-	}
-}
+//func NewFavoriteService() *FavoriteService {
+//	return &FavoriteService{
+//		FavoriteDal: &implement.FavoriteDal{},
+//		VideoDal:    &implement.VideoDal{},
+//	}
+//}
 
 // 实现接口
 var _ abstract2.FavoriteService = (*FavoriteService)(nil)

@@ -6,18 +6,17 @@ import (
 	"utopia-back/http/controller/base"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
-	v1 "utopia-back/service/implement/v1"
 )
 
 type UserController struct {
 	UserService abstract.UserService
 }
 
-func NewUserController() *UserController {
-	return &UserController{
-		UserService: v1.NewUserService(),
-	}
-}
+//func NewUserController() *UserController {
+//	return &UserController{
+//		UserService: v1.NewUserService(),
+//	}
+//}
 
 type authData struct {
 	Token  string `json:"token"`

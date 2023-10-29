@@ -5,18 +5,17 @@ import (
 	"utopia-back/http/controller/base"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
-	v1 "utopia-back/service/implement/v1"
 )
 
 type LikeController struct {
 	LikeService abstract.LikeService
 }
 
-func NewLikeController() *LikeController {
-	return &LikeController{
-		LikeService: v1.NewLikeService(),
-	}
-}
+//func NewLikeController() *LikeController {
+//	return &LikeController{
+//		LikeService: v1.NewLikeService(),
+//	}
+//}
 
 type likeRequest struct {
 	VideoId    uint `json:"video_id" validate:"required,gt=0"` // 视频id > 0 必需

@@ -6,7 +6,6 @@ import (
 	"os"
 	"path"
 	"utopia-back/database/abstract"
-	"utopia-back/database/implement"
 	"utopia-back/model"
 	utils "utopia-back/pkg/util"
 )
@@ -15,11 +14,11 @@ type UserService struct {
 	UserDal abstract.UserDal
 }
 
-func NewUserService() *UserService {
-	return &UserService{
-		UserDal: &implement.UserDal{},
-	}
-}
+//func NewUserService() *UserService {
+//	return &UserService{
+//		UserDal: &implement.UserDal{},
+//	}
+//}
 
 func (u *UserService) GetUserInfo(id uint) (userInfo model.UserInfo, err error) {
 

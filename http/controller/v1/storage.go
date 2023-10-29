@@ -10,17 +10,15 @@ import (
 	"utopia-back/http/controller/base"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
-	v1 "utopia-back/service/implement/v1"
 )
 
 type StorageController struct {
 	StorageService abstract.StorageService
 }
 
-func NewStorageController() *StorageController {
-	return &StorageController{StorageService: v1.NewStorageService()}
-}
-
+//	func NewStorageController() *StorageController {
+//		return &StorageController{StorageService: v1.NewStorageService()}
+//	}
 type uploadTokenData struct {
 	Token string `json:"token"`
 }

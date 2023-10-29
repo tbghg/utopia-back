@@ -6,16 +6,15 @@ import (
 	"utopia-back/http/controller/base"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
-	v1 "utopia-back/service/implement/v1"
 )
 
 type FollowController struct {
 	FollowService abstract.FollowService
 }
 
-func NewFollowController() *FollowController {
-	return &FollowController{FollowService: v1.NewFollowService()}
-}
+//func NewFollowController() *FollowController {
+//	return &FollowController{FollowService: v1.NewFollowService()}
+//}
 
 type followRequest struct {
 	ToUserId   int `json:"to_user_id" validate:"required,gt=0"` // 要关注的用户id > 0 必需

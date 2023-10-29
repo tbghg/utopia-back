@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"gorm.io/gorm"
 	"utopia-back/database/abstract"
-	"utopia-back/database/implement"
 	"utopia-back/model"
 )
 
@@ -14,12 +13,12 @@ type FollowService struct {
 	UserDal   abstract.UserDal
 }
 
-func NewFollowService() *FollowService {
-	return &FollowService{
-		FollowDal: &implement.FollowDal{},
-		UserDal:   &implement.UserDal{},
-	}
-}
+//func NewFollowService() *FollowService {
+//	return &FollowService{
+//		FollowDal: &implement.FollowDal{},
+//		UserDal:   &implement.UserDal{},
+//	}
+//}
 
 var ErrUserNotExist = errors.New("关注的用户不存在")
 

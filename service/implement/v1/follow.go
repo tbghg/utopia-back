@@ -4,7 +4,6 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"utopia-back/database/abstract"
-	"utopia-back/database/implement"
 	"utopia-back/model"
 )
 
@@ -13,12 +12,12 @@ type FollowService struct {
 	UserDal   abstract.UserDal
 }
 
-func NewFollowService() *FollowService {
-	return &FollowService{
-		FollowDal: &implement.FollowDal{},
-		UserDal:   &implement.UserDal{},
-	}
-}
+//func NewFollowService() *FollowService {
+//	return &FollowService{
+//		FollowDal: &implement.FollowDal{},
+//		UserDal:   &implement.UserDal{},
+//	}
+//}
 
 func (f FollowService) GetFollowList(userId uint) (list []model.UserInfo, err error) {
 	return f.FollowDal.GetFollowList(userId)

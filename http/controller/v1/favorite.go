@@ -7,18 +7,17 @@ import (
 	"utopia-back/pkg/logger"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
-	v1 "utopia-back/service/implement/v1"
 )
 
 type FavoriteController struct {
 	FavoriteService abstract.FavoriteService
 }
 
-func NewFavoriteController() *FavoriteController {
-	return &FavoriteController{
-		FavoriteService: v1.NewFavoriteService(),
-	}
-}
+//func NewFavoriteController() *FavoriteController {
+//	return &FavoriteController{
+//		FavoriteService: v1.NewFavoriteService(),
+//	}
+//}
 
 type favoriteRequest struct {
 	VideoId    int `json:"video_id" validate:"required,gt=0"` // 视频id > 0 必需
