@@ -30,7 +30,7 @@ func (f FavoriteService) AddFavorite(userId uint, videoId uint) (err error) {
 	// 判断video是否存在
 	err = f.VideoDal.IsVideoExist(videoId)
 	if err != nil {
-		if errors.As(err, &gorm.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ErrVideoNotExist
 		}
 		return err
@@ -44,7 +44,7 @@ func (f FavoriteService) CancelFavorite(userId uint, videoId uint) (err error) {
 	// 判断video是否存在
 	err = f.VideoDal.IsVideoExist(videoId)
 	if err != nil {
-		if errors.As(err, &gorm.ErrRecordNotFound) {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return ErrVideoNotExist
 		}
 		return err

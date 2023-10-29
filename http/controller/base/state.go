@@ -28,8 +28,9 @@ var (
 		Msg:  "success",
 	}
 
-	ActionTypeInvalidError = errors.New("操作类型无效") // 操作类型无效
-	UserIDInvalidError     = errors.New("用户id无效") // 用户id无效
+	ActionTypeInvalidError = errors.New("操作类型无效")    // 操作类型无效
+	UserIDInvalidError     = errors.New("用户id无效")    // 用户id无效
+	ValidParameterError    = errors.New("参数合法性校验失败") // 参数校验失败
 )
 
 const (

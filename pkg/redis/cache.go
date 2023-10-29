@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var ctx = context.Background()
+var Ctx = context.Background()
 var expire = 12 * 24 * time.Hour
 
 const (
@@ -15,10 +15,10 @@ const (
 	TypeBool
 )
 
-// Cache 缓存
-func Cache(dalFunc func() (interface{}, error), key string, ResType int) (interface{}, error) {
+// GetStringCache 从redis里面获取字符串缓存
+func GetStringCache(dalFunc func() (interface{}, error), key string, ResType int) (interface{}, error) {
 	//先去redis里面查找
-	resStr, err := RDB.Get(ctx, key).Result()
+	resStr, err := RDB.Get(Ctx, key).Result()
 	var res interface{}
 	if err != nil {
 		//redis里面没有，去数据库里面查找
@@ -26,8 +26,8 @@ func Cache(dalFunc func() (interface{}, error), key string, ResType int) (interf
 		if err != nil {
 			return nil, err
 		}
-		//将结果存入redis
-		RDB.Set(ctx, key, res, expire)
+		//将结果存入redis 异步
+		go func() { RDB.Set(Ctx, key, res, expire) }()
 		return res, nil
 	}
 	//redis里面有,把字符串转换成对应的类型,然后返回
@@ -46,5 +46,5 @@ func Cache(dalFunc func() (interface{}, error), key string, ResType int) (interf
 		}
 	}
 
-	return resStr, nil
+	return res, nil
 }

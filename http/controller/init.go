@@ -12,6 +12,7 @@ type CenterControllerV1 struct {
 	FavoriteCtrl *v1.FavoriteController
 	StorageCtrl  *v1.StorageController
 	FollowCtrl   *v1.FollowController
+	LikeCtrl     *v1.LikeController
 }
 
 type CenterControllerV2 struct {

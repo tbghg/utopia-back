@@ -21,6 +21,7 @@ func Router(r *gin.Engine) *gin.Engine {
 			FavoriteCtrl: v12.NewFavoriteController(),
 			StorageCtrl:  v12.NewStorageController(),
 			FollowCtrl:   v12.NewFollowController(),
+			LikeCtrl:     v12.NewLikeController(),
 		}
 		// 测试模块
 		testGroup := v1ApiGroup.Group("/test").Use(middleware.JwtMiddleware)
@@ -38,8 +39,9 @@ func Router(r *gin.Engine) *gin.Engine {
 		interact := v1ApiGroup.Group("/interact").Use(middleware.JwtMiddleware)
 		// 交互模块
 		{
-			interact.POST("/favorite", ctrlV1.FavoriteCtrl.Favorite)   // 收藏/取消收藏
+			interact.POST("/like", ctrlV1.LikeCtrl.Like)               // 点赞/取消点赞
 			interact.POST("/follow", ctrlV1.FollowCtrl.Follow)         // 关注/取消关注
+			interact.POST("/favorite", ctrlV1.FavoriteCtrl.Favorite)   // 收藏/取消收藏
 			interact.GET("/follower/list", ctrlV1.FollowCtrl.FansList) // 获取粉丝列表
 			interact.GET("/follow/list", ctrlV1.FollowCtrl.FollowList) // 获取关注列表
 		}
