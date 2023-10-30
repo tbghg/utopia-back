@@ -22,7 +22,7 @@ type uploadTokenData struct {
 
 type uploadCallbackReq struct {
 	Key         string `json:"key" validate:"required"`
-	Type        string `json:"type" validate:"required"`
+	FileType    string `json:"fileType" validate:"required"`
 	Uid         string `json:"uid"` // todo 可更改为JWT-Token，增强安全性
 	VideoTypeId string `json:"video_type_id"`
 	CoverUrl    string `json:"cover_url"`
@@ -85,13 +85,13 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 	}
 
 	url := config.V.GetString("qiniu.kodoApi") + "/" + r.Key
-	if r.Type == callbackCover {
+	if r.FileType == callbackCover {
 		err = v.StorageService.UpdateAvatar(uid, url)
 		if err != nil {
 			return
 		}
 	}
-	if r.Type == callbackAvatar || r.Type == callbackCover {
+	if r.FileType == callbackAvatar || r.FileType == callbackCover {
 		c.JSON(http.StatusOK, &base.ResponseWithData{
 			Code: base.SuccessCode,
 			Msg:  "ok",
@@ -116,7 +116,7 @@ func callbackReqValidate(r uploadCallbackReq) (uid uint, videoTypeId uint, err e
 	if err = utils.Validate.Struct(r); err != nil {
 		return
 	}
-	if r.Type == callbackCover || r.Type == callbackAvatar {
+	if r.FileType == callbackCover || r.FileType == callbackAvatar {
 		return
 	}
 	// 上传视频，校验参数
