@@ -22,7 +22,7 @@ type uploadTokenData struct {
 
 type uploadCallbackReq struct {
 	Key         string `json:"key" validate:"required"`
-	FileType    string `json:"fileType" validate:"required"`
+	FileType    string `json:"file_type" validate:"required"`
 	Uid         string `json:"uid"` // todo 可更改为JWT-Token，增强安全性
 	VideoTypeId string `json:"video_type_id"`
 	CoverUrl    string `json:"cover_url"`
