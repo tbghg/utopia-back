@@ -2,11 +2,20 @@ package implement
 
 import (
 	"gorm.io/gorm"
+	"utopia-back/database/abstract"
 	"utopia-back/model"
 )
 
 type VideoDal struct {
 	Db *gorm.DB
+}
+
+func (v *VideoDal) GetVideoByType(lastTime string, videoTypeId uint) (videos []*model.Video, err error) {
+	res := v.Db.Model(model.Video{}).
+		Where("created_at > ? and video_type_id = ?", lastTime, videoTypeId).
+		Order("created_at").Limit(20).Find(&videos)
+	err = res.Error
+	return
 }
 
 func (v *VideoDal) CreateVideo(video *model.Video) (id uint, err error) {
@@ -24,3 +33,5 @@ func (v *VideoDal) IsVideoExist(videoId uint) (err error) {
 	}
 	return nil
 }
+
+var _ abstract.VideoDal = (*VideoDal)(nil)

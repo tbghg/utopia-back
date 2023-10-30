@@ -20,3 +20,31 @@ type Video struct {
 	VideoTypeID uint   `gorm:"not null" json:"video_type_id"`                             // 视频类型
 	Describe    string `gorm:"type:varchar(64)" json:"describe"`                          // 描述
 }
+
+// VideoInfo 视频信息
+type VideoInfo struct {
+	ID        uint      `json:"id"`         // 视频id
+	CreatedAt time.Time `json:"created_at"` // 视频创建时间
+
+	PlayUrl     string `json:"play_url"`      // 视频播放地址
+	CoverUrl    string `json:"cover_url"`     // 视频封面
+	VideoTypeID uint   `json:"video_type_id"` // 视频类型
+	Describe    string `json:"describe"`      // 描述
+
+	Author AuthorInfo `json:"author"` // 作者信息
+
+	IsFollow   bool `json:"is_follow"`   // 是否关注该作者
+	IsLike     bool `json:"is_like"`     // 是否点赞过
+	IsFavorite bool `json:"is_favorite"` // 是否收藏过
+}
+
+// AuthorInfo 作者信息
+type AuthorInfo struct {
+	ID          uint   `json:"id"`           // 用户id
+	Nickname    string `json:"nickname"`     // 昵称
+	Avatar      string `json:"avatar"`       // 头像
+	Username    string `json:"username"`     // 用户名
+	FansCount   int64  `json:"fans_count"`   // 粉丝数
+	FollowCount int64  `json:"follow_count"` // 关注数
+	VideoCount  int64  `json:"video_count"`  // 视频数
+}

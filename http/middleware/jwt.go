@@ -83,3 +83,35 @@ func JwtMiddleware(c *gin.Context) {
 	return
 
 }
+
+func JwtWithoutAbortMiddleware(c *gin.Context) {
+	defer func() {
+		c.Next()
+	}()
+
+	authHeader := c.Request.Header.Get("Authorization")
+	//请求头中没有Authorization
+	if authHeader == "" {
+		return
+	}
+	// 按空格分割
+	parts := strings.SplitN(authHeader, " ", 2)
+	if !(len(parts) == 2 && parts[0] == "Bearer") {
+		return
+	}
+	//解析token
+	tokenStr := parts[1]
+	secret := []byte(config.V.GetString("jwt.secret"))
+	token, err := jwt.ParseWithClaims(tokenStr, &utils.MyClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return secret, nil
+	})
+	if err != nil {
+		return
+	}
+	if claims, ok := token.Claims.(*utils.MyClaims); ok && token.Valid {
+		id := claims.ID
+		c.Set("user_id", id)
+		return
+	}
+	return
+}

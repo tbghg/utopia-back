@@ -45,6 +45,11 @@ func Router(r *gin.Engine) *gin.Engine {
 			storageGroup.GET("/token", middleware.JwtMiddleware, ctrlV1.StorageCtrl.UploadToken)
 			storageGroup.POST("/callback", ctrlV1.StorageCtrl.UploadCallback)
 		}
+		// 视频模块
+		videoGroup := v1ApiGroup.Group("/video")
+		{
+			videoGroup.GET("/category", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.GetCategoryVideos)
+		}
 	}
 
 	v2ApiGroup := r.Group("/api/v2")
