@@ -9,4 +9,6 @@ type LikeDal interface {
 	IsLike(userId uint, videoId uint) (isLike bool, err error)
 	// GetLikeCount 获取点赞数
 	GetLikeCount(videoId uint) (count int64, err error)
+	// GetLikeUserId 获取点赞用户
+	GetLikeUserId(videoId uint) (user []uint, err error)
 }

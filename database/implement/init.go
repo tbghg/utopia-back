@@ -92,6 +92,7 @@ func InitTable() {
 	_ = myDb.AutoMigrate(&model.Like{})
 	_ = myDb.AutoMigrate(&model.Favorite{})
 	_ = myDb.AutoMigrate(&model.Follow{})
+	_ = myDb.AutoMigrate(&model.LikeCount{})
 }
 
 func NewCenterDal() *CenterDal {

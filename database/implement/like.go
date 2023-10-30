@@ -10,6 +10,14 @@ import (
 
 type LikeDal struct{ Db *gorm.DB }
 
+func (l *LikeDal) GetLikeUserId(videoId uint) (user []uint, err error) {
+	res := l.Db.Model(&model.Like{}).Where("video_id = ? AND status = ?", videoId, true).Find(&user)
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return user, err
+}
+
 func (l *LikeDal) Like(userId uint, videoId uint) (err error) {
 	res := l.Db.Clauses(
 		clause.OnConflict{

@@ -22,6 +22,7 @@ type CenterControllerV1 struct {
 
 type CenterControllerV2 struct {
 	FollowCtrl *v2.FollowController
+	LikeCtrl   *v2.LikeController
 }
 
 type CenterControllerV3 struct {
@@ -73,8 +74,13 @@ func NewCenterControllerV2(dal *implement.CenterDal) *CenterControllerV2 {
 		FollowService: &v22.FollowService{FollowDal: dal.FollowDal, UserDal: dal.UserDal},
 	}
 
+	likeCtrl := &v2.LikeController{
+		LikeService: &v22.LikeService{LikeDal: dal.LikeDal},
+	}
+
 	return &CenterControllerV2{
 		FollowCtrl: followCtrl,
+		LikeCtrl:   likeCtrl,
 	}
 }
 
