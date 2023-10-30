@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"strconv"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
 	abstract2 "utopia-back/service/abstract"
@@ -14,11 +15,12 @@ type VideoService struct {
 	LikeDal     abstract.LikeDal
 }
 
-func (v VideoService) GetCategoryVideos(uid uint, lastTime string, videoTypeId uint) ([]*model.VideoInfo, string, error) {
+func (v VideoService) GetCategoryVideos(uid uint, lastTime uint, videoTypeId uint) ([]*model.VideoInfo, uint, error) {
 	var videoInfos []*model.VideoInfo
-	videos, err := v.VideoDal.GetVideoByType(lastTime, videoTypeId)
+	sLastTime := strconv.Itoa(int(lastTime / 1e3))
+	videos, err := v.VideoDal.GetVideoByType(sLastTime, videoTypeId)
 	if err != nil || len(videos) == 0 {
-		return nil, "", err
+		return nil, 0, err
 	}
 
 	videoInfos = make([]*model.VideoInfo, len(videos))
@@ -33,7 +35,7 @@ func (v VideoService) GetCategoryVideos(uid uint, lastTime string, videoTypeId u
 
 		userInfo, err := v.UserDal.GetUserInfoById(videos[i].AuthorID)
 		if err != nil {
-			return nil, "", err
+			return nil, 0, err
 		}
 
 		videoInfos[i].Author.ID = userInfo.ID
@@ -47,20 +49,20 @@ func (v VideoService) GetCategoryVideos(uid uint, lastTime string, videoTypeId u
 		if uid != 0 {
 			videoInfos[i].IsFollow, err = v.FollowDal.IsFollow(uid, videos[i].AuthorID)
 			if err != nil {
-				return nil, "", err
+				return nil, 0, err
 			}
 			videoInfos[i].IsLike, err = v.LikeDal.IsLike(uid, videos[i].AuthorID)
 			if err != nil {
-				return nil, "", err
+				return nil, 0, err
 			}
 			videoInfos[i].IsFavorite, err = v.FavoriteDal.IsFavorite(uid, videos[i].AuthorID)
 			if err != nil {
-				return nil, "", err
+				return nil, 0, err
 			}
 		}
 	}
-	nextTime := videoInfos[len(videoInfos)-1].CreatedAt.String()
-	return videoInfos, nextTime, nil
+	nextTime := videoInfos[len(videoInfos)-1].CreatedAt.UnixMilli()
+	return videoInfos, uint(nextTime), nil
 }
 
 var _ abstract2.VideoService = (*VideoService)(nil)
