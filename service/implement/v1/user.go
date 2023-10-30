@@ -27,9 +27,12 @@ var (
 
 func (u *UserService) Login(username string, password string) (token string, id uint, err error) {
 	// 检查用户是否存在
-	user, err := u.UserDal.GetUserByUsername(username)
-	if err != nil {
+	user, exist, err := u.UserDal.GetUserByUsername(username)
+	if exist {
 		return "", 0, ErrorUserNotExists
+	}
+	if err != nil {
+		return "", 0, err
 	}
 	// 检查密码是否正确
 	if utils.ValidMd5EncodeWithSalt(password, user.Salt, user.Password) {
@@ -41,9 +44,12 @@ func (u *UserService) Login(username string, password string) (token string, id 
 
 func (u *UserService) Register(username string, password string) (token string, id uint, err error) {
 	// 检查用户是否存在
-	_, err = u.UserDal.GetUserByUsername(username)
-	if err == nil {
+	_, exist, err := u.UserDal.GetUserByUsername(username)
+	if exist {
 		return "", 0, ErrorUserExists
+	}
+	if err != nil {
+		return "", 0, err
 	}
 
 	// 密码加密+盐

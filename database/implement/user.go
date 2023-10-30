@@ -62,12 +62,15 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 
 }
 
-func (u *UserDal) GetUserByUsername(username string) (user model.User, err error) {
+func (u *UserDal) GetUserByUsername(username string) (user model.User, exist bool, err error) {
 	res := u.Db.First(&user, "username = ?", username)
+	if res.Error == nil {
+		exist = true
+	}
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
-	return user, err
+	return
 }
 
 func (u *UserDal) CreateUser(user *model.User) (id uint, err error) {

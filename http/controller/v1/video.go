@@ -15,7 +15,7 @@ type VideoController struct {
 }
 
 type VideoResp struct {
-	VideoInfo []*model.VideoInfo `json:"Video_info"`
+	VideoInfo []*model.VideoInfo `json:"video_info"`
 	NextTime  string             `json:"next_time"`
 }
 
