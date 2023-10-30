@@ -2,11 +2,13 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"utopia-back/http/controller/base"
 	"utopia-back/model"
+	"utopia-back/pkg/logger"
 	"utopia-back/service/abstract"
 )
 
@@ -16,14 +18,14 @@ type VideoController struct {
 
 type VideoResp struct {
 	VideoInfo []*model.VideoInfo `json:"video_info"`
-	NextTime  string             `json:"next_time"`
+	NextTime  uint               `json:"next_time"`
 }
 
 func (v VideoController) GetCategoryVideos(c *gin.Context) {
 	var (
 		err        error
 		videoInfos []*model.VideoInfo
-		nextTime   string
+		nextTime   uint
 		uid        int
 	)
 	// 请求处理失败，返回错误信息
@@ -33,14 +35,20 @@ func (v VideoController) GetCategoryVideos(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
+			logger.Logger.Error(fmt.Sprintf("GetCategoryVideos err:%+v", err))
 		}
 	}()
 
-	lastTime, _ := c.GetQuery("last_time")
+	sLastTime, _ := c.GetQuery("last_time")
+	lastTime, err := strconv.ParseInt(sLastTime, 10, 64)
+	if err != nil {
+		err = errors.New(fmt.Sprintf("last_time:%v 参数错误", sLastTime))
+		return
+	}
 	sVideoTypeId, _ := c.GetQuery("video_type_id")
 	videoTypeId, err := strconv.ParseInt(sVideoTypeId, 10, 64)
 	if err != nil {
-		err = errors.New("参数错误")
+		err = errors.New(fmt.Sprintf("video_type_id:%v 参数错误", sVideoTypeId))
 		return
 	}
 	// 获取用户id
@@ -48,7 +56,7 @@ func (v VideoController) GetCategoryVideos(c *gin.Context) {
 		uid, _ = value.(int)
 	}
 
-	videoInfos, nextTime, err = v.VideoService.GetCategoryVideos(uint(uid), lastTime, uint(videoTypeId))
+	videoInfos, nextTime, err = v.VideoService.GetCategoryVideos(uint(uid), uint(lastTime), uint(videoTypeId))
 	if err != nil {
 		return
 	}
