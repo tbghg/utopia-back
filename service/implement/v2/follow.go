@@ -12,8 +12,6 @@ type FollowService struct {
 	UserDal   abstract.UserDal
 }
 
-var ErrUserNotExist = errors.New("关注的用户不存在")
-
 // Follow 关注
 func (f FollowService) Follow(userId uint, followId uint) (err error) {
 	// 判断followId是否存在

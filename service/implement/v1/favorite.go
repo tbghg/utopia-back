@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"utopia-back/database/abstract"
 	abstract2 "utopia-back/service/abstract"
 )
@@ -13,8 +12,6 @@ type FavoriteService struct {
 
 // 实现接口
 var _ abstract2.FavoriteService = (*FavoriteService)(nil)
-
-var ErrVideoNotExist = errors.New("视频不存在")
 
 // AddFavorite 添加收藏
 func (f FavoriteService) AddFavorite(userId uint, videoId uint) (err error) {

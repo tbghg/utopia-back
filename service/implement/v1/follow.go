@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"errors"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
 )
@@ -14,8 +13,6 @@ type FollowService struct {
 func (f FollowService) GetFollowList(userId uint) (list []model.UserInfo, err error) {
 	return f.FollowDal.GetFollowList(userId)
 }
-
-var ErrUserNotExist = errors.New("关注的用户不存在")
 
 // Follow 关注
 func (f FollowService) Follow(userId uint, followId uint) (err error) {
