@@ -24,11 +24,15 @@ func Router(r *gin.Engine) *gin.Engine {
 			testGroup.GET("/testUser/select/:id", ctrlV1.TestUserCtrl.Select)
 		}
 
-		authGroup := v1ApiGroup.Group("/user")
-		// 用户鉴权模块
+		userGroup := v1ApiGroup.Group("/user")
+		// 用户模块
 		{
-			authGroup.POST("/login", ctrlV1.UserCtrl.Login)
-			authGroup.POST("/register", ctrlV1.UserCtrl.Register)
+			// 登录注册
+			userGroup.POST("/login", ctrlV1.UserCtrl.Login)
+			userGroup.POST("/register", ctrlV1.UserCtrl.Register)
+
+			// 修改昵称
+			userGroup.POST("/nickname", middleware.JwtMiddleware, ctrlV1.UserCtrl.UpdateNickname)
 		}
 		interact := v1ApiGroup.Group("/interact").Use(middleware.JwtMiddleware)
 		// 交互模块

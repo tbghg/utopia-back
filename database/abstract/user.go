@@ -8,4 +8,5 @@ type UserDal interface {
 	GetUserById(id uint) (user model.User, err error)
 	GetUserInfoById(id uint) (userInfo model.UserInfo, err error)
 	UpdateAvatar(id uint, avatarUrl string) (err error)
+	UpdateNickname(id uint, nickname string) (err error)
 }

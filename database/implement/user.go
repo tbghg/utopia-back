@@ -94,4 +94,12 @@ func (u *UserDal) UpdateAvatar(id uint, avatarUrl string) (err error) {
 	return
 }
 
+func (u *UserDal) UpdateNickname(id uint, nickname string) (err error) {
+	res := u.Db.Model(&model.User{ID: id}).Update("nickname", nickname)
+	if res.Error != nil {
+		return res.Error
+	}
+	return
+}
+
 var _ abstract.UserDal = (*UserDal)(nil)

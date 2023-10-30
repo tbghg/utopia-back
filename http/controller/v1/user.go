@@ -22,6 +22,10 @@ type userRequest struct {
 	Password string `json:"password" validate:"required"`
 }
 
+type updateNicknameReq struct {
+	Nickname string `json:"nickname" validate:"required"`
+}
+
 func (u *UserController) Login(c *gin.Context) {
 
 	var (
@@ -101,4 +105,40 @@ func (u *UserController) Register(c *gin.Context) {
 			Token:  token,
 			UserId: int(id),
 		}})
+}
+
+func (u *UserController) UpdateNickname(c *gin.Context) {
+	var (
+		err error
+		r   updateNicknameReq
+	)
+	defer func() {
+		if err != nil {
+			c.JSON(http.StatusOK, &base.ResponseWithData{
+				Code: base.ErrorCode,
+				Msg:  err.Error(),
+			})
+		}
+	}()
+
+	// 获取用户id
+	value, ok := c.Get("user_id")
+	uid, ok := value.(int)
+	if !ok {
+		err = base.UserIDInvalidError
+		return
+	}
+	// 接收参数并绑定
+	if err = c.ShouldBindJSON(&r); err != nil {
+		return
+	}
+	// 参数校验
+	if err = utils.Validate.Struct(r); err != nil {
+		return
+	}
+	err = u.UserService.UpdateNickname(uint(uid), r.Nickname)
+	if err != nil {
+		return
+	}
+	c.JSON(http.StatusOK, base.SuccessResponse)
 }

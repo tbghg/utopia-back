@@ -77,3 +77,7 @@ func (u *UserService) Register(username string, password string) (token string, 
 	return utils.GenToken(int(id)), user.ID, nil
 
 }
+
+func (u *UserService) UpdateNickname(uid uint, nickname string) (err error) {
+	return u.UserDal.UpdateNickname(uid, nickname)
+}

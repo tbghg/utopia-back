@@ -9,4 +9,6 @@ type UserService interface {
 	Register(username string, password string) (token string, id uint, err error)
 	// GetUserInfo 获取用户信息
 	GetUserInfo(id uint) (userInfo model.UserInfo, err error)
+	// UpdateNickname 修改昵称
+	UpdateNickname(uid uint, nickname string) error
 }
