@@ -1,6 +1,7 @@
 package implement
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"utopia-back/database/abstract"
@@ -33,28 +34,37 @@ func (f FavoriteDal) CancelFavorite(userId uint, video uint) (err error) {
 		Status:  false,
 	}
 	res := f.Db.Model(&favorite).Where("user_id = ? AND video_id = ?", userId, video).Update("status", favorite.Status)
-	return res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return err
 }
 
 func (f FavoriteDal) GetFavoriteList(userId uint) (list []uint, err error) {
 	//返回的是videoId的列表
 	res := f.Db.Where("user_id = ?", userId).Select("video_id").Find(&list)
-	return list, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return list, err
 }
 
 func (f FavoriteDal) IsFavorite(userId uint, videoId uint) (isFavorite bool, err error) {
 	var favorite model.Favorite
 	res := f.Db.Where("user_id = ? AND video_id = ?", userId, videoId).First(&favorite)
-	if res.Error != nil {
-		return false, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
 	}
-	return true, nil
+	return favorite.Status, err
 }
 
 func (f FavoriteDal) GetFavoriteCount(videoId uint) (count int64, err error) {
 	var favorite model.Favorite
 	res := f.Db.Where("video_id = ?", videoId).Find(&favorite).Count(&count)
-	return count, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return count, err
 }
 
 var _ abstract.FavoriteDal = (*FavoriteDal)(nil)

@@ -2,7 +2,6 @@ package v1
 
 import (
 	"errors"
-	"gorm.io/gorm"
 	"utopia-back/database/abstract"
 	abstract2 "utopia-back/service/abstract"
 )
@@ -22,9 +21,6 @@ func (f FavoriteService) AddFavorite(userId uint, videoId uint) (err error) {
 	// 判断video是否存在
 	err = f.VideoDal.IsVideoExist(videoId)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return ErrVideoNotExist
-		}
 		return err
 	}
 	// 添加收藏
@@ -36,9 +32,6 @@ func (f FavoriteService) CancelFavorite(userId uint, videoId uint) (err error) {
 	// 判断video是否存在
 	err = f.VideoDal.IsVideoExist(videoId)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return ErrVideoNotExist
-		}
 		return err
 	}
 	// 取消收藏

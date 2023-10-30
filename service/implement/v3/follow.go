@@ -2,7 +2,6 @@ package v3
 
 import (
 	"errors"
-	"gorm.io/gorm"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
 	abstract2 "utopia-back/service/abstract"
@@ -17,29 +16,11 @@ var ErrUserNotExist = errors.New("关注的用户不存在")
 
 // Follow 关注
 func (f FollowService) Follow(userId uint, followId uint) (err error) {
-	// 判断followId是否存在
-	_, err = f.UserDal.GetUserById(followId)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return ErrUserNotExist
-		}
-		return err
-	}
-	// 关注
 	return f.FollowDal.Follow(userId, followId)
 }
 
 // UnFollow 取消关注
 func (f FollowService) UnFollow(userId uint, followId uint) (err error) {
-	// 判断followId是否存在
-	_, err = f.UserDal.GetUserById(followId)
-	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return ErrUserNotExist
-		}
-		return err
-	}
-	// 取消关注
 	return f.FollowDal.UnFollow(userId, followId)
 }
 

@@ -1,6 +1,7 @@
 package implement
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 	"utopia-back/database/abstract"
@@ -24,19 +25,28 @@ func (l *LikeDal) Like(userId uint, videoId uint) (err error) {
 
 func (l *LikeDal) UnLike(userId uint, videoId uint) (err error) {
 	res := l.Db.Model(&model.Like{}).Where("user_id = ? AND video_id = ?", userId, videoId).Update("status", false)
-	return res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return err
 }
 
 func (l *LikeDal) IsLike(userId uint, videoId uint) (isLike bool, err error) {
 	var like model.Like
 	res := l.Db.Where("user_id = ? AND video_id = ?", userId, videoId).First(&like)
-	return like.Status, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return like.Status, err
 }
 
 func (l *LikeDal) GetLikeCount(videoId uint) (count int64, err error) {
 	var likeCount int64
 	res := l.Db.Model(&model.Like{}).Where("video_id = ?", videoId).Count(&likeCount)
-	return likeCount, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return likeCount, err
 }
 
 var _ abstract.LikeDal = (*LikeDal)(nil)

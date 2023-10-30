@@ -1,6 +1,7 @@
 package implement
 
 import (
+	"errors"
 	"gorm.io/gorm"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
@@ -13,33 +14,47 @@ type UserDal struct {
 func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) {
 	userInfo = model.UserInfo{}
 	userInfo.ID = id
+
 	// 获取用户基本信息
-	user, err := u.GetUserById(id)
+	var user model.User
+	user, err = u.GetUserById(id)
 	if err != nil {
 		return userInfo, err
 	}
 	userInfo.Username = user.Username
 	userInfo.Nickname = user.Nickname
 	userInfo.Avatar = user.Avatar
+
 	// 获取用户的关注数
 	var followCount int64
 	res := u.Db.Model(&model.Follow{}).Where("user_id = ?", id).Count(&followCount)
-	if res.Error != nil {
-		return userInfo, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	if err != nil {
+		return userInfo, err
 	}
 	userInfo.FollowCount = followCount
+
 	// 获取用户的粉丝数
 	var fansCount int64
 	res = u.Db.Model(&model.Follow{}).Where("follow_id = ?", id).Count(&fansCount)
-	if res.Error != nil {
-		return userInfo, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	if err != nil {
+		return userInfo, err
 	}
 	userInfo.FansCount = fansCount
+
 	// 获取用户的视频作品数
 	var videoCount int64
 	res = u.Db.Model(&model.Video{}).Where("author_id = ?", id).Count(&videoCount)
-	if res.Error != nil {
-		return userInfo, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	if err != nil {
+		return userInfo, err
 	}
 	userInfo.VideoCount = videoCount
 
@@ -49,10 +64,10 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 
 func (u *UserDal) GetUserByUsername(username string) (user model.User, err error) {
 	res := u.Db.First(&user, "username = ?", username)
-	if res.Error != nil {
-		return user, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
 	}
-	return user, nil
+	return user, err
 }
 
 func (u *UserDal) CreateUser(user *model.User) (id uint, err error) {
@@ -65,10 +80,10 @@ func (u *UserDal) CreateUser(user *model.User) (id uint, err error) {
 
 func (u *UserDal) GetUserById(id uint) (user model.User, err error) {
 	res := u.Db.First(&user, "id = ?", id)
-	if res.Error != nil {
-		return user, res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
 	}
-	return user, nil
+	return user, err
 }
 
 func (u *UserDal) UpdateAvatar(id uint, avatarUrl string) (err error) {

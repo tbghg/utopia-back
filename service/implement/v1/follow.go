@@ -2,7 +2,6 @@ package v1
 
 import (
 	"errors"
-	"gorm.io/gorm"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
 )
@@ -23,9 +22,6 @@ func (f FollowService) Follow(userId uint, followId uint) (err error) {
 	// 判断followId是否存在
 	_, err = f.UserDal.GetUserById(followId)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return ErrUserNotExist
-		}
 		return err
 	}
 	// 关注
@@ -37,9 +33,6 @@ func (f FollowService) UnFollow(userId uint, followId uint) (err error) {
 	// 判断followId是否存在
 	_, err = f.UserDal.GetUserById(followId)
 	if err != nil {
-		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return ErrUserNotExist
-		}
 		return err
 	}
 	// 取消关注
