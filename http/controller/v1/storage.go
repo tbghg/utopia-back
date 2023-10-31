@@ -8,7 +8,6 @@ import (
 	"strconv"
 	"utopia-back/config"
 	"utopia-back/http/controller/base"
-	"utopia-back/http/middleware"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
 )
@@ -87,12 +86,6 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 
 	url := config.V.GetString("qiniu.kodoApi") + "/" + r.Key
 	if r.FileType == callbackAvatar {
-		// 如果是头像，过JWT中间件，获取token
-		uid = uint(middleware.JwtWithoutAbort(c))
-		if uid <= 0 {
-			err = errors.New("token无效")
-			return
-		}
 		err = v.StorageService.UpdateAvatar(uid, url)
 		if err != nil {
 			return
@@ -123,14 +116,28 @@ func callbackReqValidate(r uploadCallbackReq) (uid uint, videoTypeId uint, err e
 	if err = utils.Validate.Struct(r); err != nil {
 		return
 	}
-	if r.FileType == callbackCover || r.FileType == callbackAvatar {
+	// 封面不做校验
+	if r.FileType == callbackCover {
 		return
 	}
-	// 上传视频，校验参数
 	aid, err1 := strconv.ParseUint(r.Uid, 10, 64)
-	tid, err2 := strconv.ParseUint(r.VideoTypeId, 10, 64)
-	if err1 != nil || err2 != nil || r.CoverUrl == "null" {
-		err = errors.New("参数传递错误")
+	if err1 != nil {
+		err = errors.New("uid参数传递错误")
+		return
+	}
+	// 头像有uid即可，不用进一步校验
+	if r.FileType == callbackAvatar {
+		return uint(aid), 0, nil
+	}
+
+	if r.CoverUrl == "null" {
+		err = errors.New("cover_url参数错误，请携带封面")
+		return
+	}
+
+	tid, err1 := strconv.ParseUint(r.VideoTypeId, 10, 64)
+	if err1 != nil {
+		err = errors.New("video_type_id参数错误")
 		return
 	}
 	uid, videoTypeId = uint(aid), uint(tid)
