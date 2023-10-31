@@ -28,7 +28,7 @@ var (
 func (u *UserService) Login(username string, password string) (token string, id uint, err error) {
 	// 检查用户是否存在
 	user, exist, err := u.UserDal.GetUserByUsername(username)
-	if exist {
+	if !exist {
 		return "", 0, ErrorUserNotExists
 	}
 	if err != nil {
