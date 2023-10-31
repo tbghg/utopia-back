@@ -58,6 +58,7 @@ func ipRateValidate(clientIp string, ipRateConf *IpRateConf, IpRateBucket map[st
 	if ok {
 		b.Wait(1)
 	} else {
+		IpRateBucket = make(map[string]*ratelimit.Bucket)
 		IpRateBucket[clientIp] = ratelimit.NewBucket(ipRateConf.FillInterval, ipRateConf.Capacity)
 	}
 }
