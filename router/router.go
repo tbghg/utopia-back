@@ -8,6 +8,7 @@ import (
 )
 
 func Router(r *gin.Engine) *gin.Engine {
+	r.Use(middleware.Cors())
 	r.Use(middleware.RateLimit)
 	// 初始化Dal 保持单例
 	centerDal := implement.NewCenterDal()
