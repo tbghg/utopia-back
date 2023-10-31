@@ -15,6 +15,11 @@ func InitRateLimit() {
 		Bucket: ratelimit.NewBucketWithQuantum(10*time.Millisecond, 10, 5),
 		// 最大等待时间
 		MaxWait: 20 * time.Millisecond,
+
+		IpRateConf: &middleware.IpRateConf{
+			FillInterval: time.Second,
+			Capacity:     5,
+		},
 	}
 	middleware.BucketMap["/api/v1/upload/callback"] = &middleware.BucketConf{
 		Bucket:  ratelimit.NewBucketWithQuantum(10*time.Millisecond, 10, 5),
@@ -24,4 +29,5 @@ func InitRateLimit() {
 		Bucket:  ratelimit.NewBucketWithQuantum(10*time.Millisecond, 100, 20),
 		MaxWait: 10 * time.Millisecond,
 	}
+	middleware.FillDefault()
 }
