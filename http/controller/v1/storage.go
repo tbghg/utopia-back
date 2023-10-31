@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"utopia-back/config"
 	"utopia-back/http/controller/base"
+	"utopia-back/http/middleware"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
 )
@@ -86,6 +87,12 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 
 	url := config.V.GetString("qiniu.kodoApi") + "/" + r.Key
 	if r.FileType == callbackAvatar {
+		// 如果是头像，过JWT中间件，获取token
+		uid = uint(middleware.JwtWithoutAbort(c))
+		if uid <= 0 {
+			err = errors.New("token无效")
+			return
+		}
 		err = v.StorageService.UpdateAvatar(uid, url)
 		if err != nil {
 			return
