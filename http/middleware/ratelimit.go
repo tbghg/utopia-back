@@ -8,18 +8,32 @@ import (
 )
 
 var BucketMap = make(map[string]*BucketConf)
+var defaultIpRateConf = &IpRateConf{
+	FillInterval: 100 * time.Millisecond,
+	Capacity:     5,
+}
 
 type BucketConf struct {
 	Bucket  *ratelimit.Bucket
 	MaxWait time.Duration
+
+	IpRateConf   *IpRateConf
+	IpRateBucket map[string]*ratelimit.Bucket
+}
+
+type IpRateConf struct {
+	FillInterval time.Duration
+	Capacity     int64
 }
 
 func RateLimit(c *gin.Context) {
-	bucket, ok := BucketMap[c.Request.URL.Path]
+	bucketConf, ok := BucketMap[c.Request.URL.Path]
 	if !ok {
-		bucket = BucketMap["default"]
+		bucketConf = BucketMap["default"]
 	}
-	if bucket.Bucket.WaitMaxDuration(1, bucket.MaxWait) {
+
+	if bucketConf.Bucket.WaitMaxDuration(1, bucketConf.MaxWait) {
+		ipRateValidate(c.ClientIP(), bucketConf.IpRateConf, bucketConf.IpRateBucket)
 		c.Next()
 		return
 	}
@@ -29,4 +43,21 @@ func RateLimit(c *gin.Context) {
 	})
 	c.Abort()
 	return
+}
+
+func FillDefault() {
+	for _, bConf := range BucketMap {
+		if bConf.IpRateConf == nil {
+			bConf.IpRateConf = defaultIpRateConf
+		}
+	}
+}
+
+func ipRateValidate(clientIp string, ipRateConf *IpRateConf, IpRateBucket map[string]*ratelimit.Bucket) {
+	b, ok := IpRateBucket[clientIp]
+	if ok {
+		b.Wait(1)
+	} else {
+		IpRateBucket[clientIp] = ratelimit.NewBucket(ipRateConf.FillInterval, ipRateConf.Capacity)
+	}
 }
