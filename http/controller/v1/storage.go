@@ -85,7 +85,7 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 	}
 
 	url := config.V.GetString("qiniu.kodoApi") + "/" + r.Key
-	if r.FileType == callbackCover {
+	if r.FileType == callbackAvatar {
 		err = v.StorageService.UpdateAvatar(uid, url)
 		if err != nil {
 			return
