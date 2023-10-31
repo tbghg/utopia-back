@@ -38,7 +38,6 @@ func (f FollowService) GetFollowList(userId uint) (list []model.UserInfo, err er
 	followIdList, err := f.FollowDal.GetFollowIdList(userId)
 	if err != nil {
 		return nil, err
-
 	}
 	// 再根据粉丝id列表获取粉丝信息列表
 	return f.getUserInfo(followIdList)

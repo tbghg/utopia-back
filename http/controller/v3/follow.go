@@ -33,7 +33,7 @@ func (f *FollowController) Follow(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
-			logger.Logger.Error(fmt.Sprintf("FollowV2 err:%+v", err))
+			logger.Logger.Error(fmt.Sprintf("FollowV3 err:%+v", err))
 		}
 	}()
 
@@ -82,7 +82,7 @@ func (f *FollowController) FansList(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
-			logger.Logger.Error(fmt.Sprintf("FansListV2 err:%+v", err))
+			logger.Logger.Error(fmt.Sprintf("FansListV3 err:%+v", err))
 		}
 	}()
 
@@ -116,7 +116,7 @@ func (f *FollowController) FollowList(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
-			logger.Logger.Error(fmt.Sprintf("FollowListV2 err:%+v", err))
+			logger.Logger.Error(fmt.Sprintf("FollowListV3 err:%+v", err))
 		}
 	}()
 

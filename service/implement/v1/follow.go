@@ -11,6 +11,7 @@ type FollowService struct {
 }
 
 func (f FollowService) GetFollowList(userId uint) (list []model.UserInfo, err error) {
+	// 直接通过一条SQL查询出所有结果
 	return f.FollowDal.GetFollowList(userId)
 }
 

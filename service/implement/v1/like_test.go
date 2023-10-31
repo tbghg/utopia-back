@@ -2,9 +2,9 @@ package v1
 
 import (
 	"testing"
+	"utopia-back/cache"
 	"utopia-back/database/abstract"
 	"utopia-back/database/implement"
-	"utopia-back/pkg/redis"
 )
 
 func TestLikeService_GetLikeCount(t *testing.T) {
@@ -14,7 +14,7 @@ func TestLikeService_GetLikeCount(t *testing.T) {
 		t.Errorf("TestInit() error = %v", err)
 	}
 	// 初始化redis
-	err = redis.TestInit()
+	err = cache.TestInit()
 
 	type fields struct {
 		LikeDal  abstract.LikeDal

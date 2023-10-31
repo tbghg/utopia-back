@@ -1,9 +1,8 @@
 package v1
 
 import (
-	"strconv"
+	"utopia-back/cache"
 	"utopia-back/database/abstract"
-	"utopia-back/pkg/redis"
 	abstract2 "utopia-back/service/abstract"
 )
 
@@ -27,7 +26,8 @@ func (l LikeService) Like(userId uint, videoId uint) (err error) {
 		return err
 	}
 	// 更新缓存
-	err = redis.RDB.Incr(redis.Ctx, "like:count:"+strconv.Itoa(int(videoId))).Err()
+	key := cache.VideoLikeCountKey(videoId)
+	err = cache.RDB.Incr(cache.Ctx, key).Err()
 
 	if err != nil {
 		return err
@@ -48,7 +48,8 @@ func (l LikeService) UnLike(userId uint, videoId uint) (err error) {
 		return err
 	}
 	// 更新缓存
-	err = redis.RDB.Decr(redis.Ctx, "like:count:"+strconv.Itoa(int(videoId))).Err()
+	key := cache.VideoLikeCountKey(videoId)
+	err = cache.RDB.Decr(cache.Ctx, key).Err()
 	if err != nil {
 		return err
 	}
@@ -61,9 +62,9 @@ func (l LikeService) IsLike(userId uint, videoId uint) (isLike bool, err error) 
 
 func (l LikeService) GetLikeCount(videoId uint) (count int64, err error) {
 	// 构造key
-	key := "like:count:" + strconv.Itoa(int(videoId))
+	key := cache.VideoLikeCountKey(videoId)
 	// 缓存层取数据
-	res, err := redis.GetStringCache(func() (interface{}, error) { return l.LikeDal.GetLikeCount(videoId) }, key, redis.TypeInt64)
+	res, err := cache.GetStringCache(func() (interface{}, error) { return l.LikeDal.GetLikeCount(videoId) }, key, cache.TypeInt64)
 	// 返回结果
 	if err != nil {
 		return 0, err

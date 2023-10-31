@@ -1,8 +1,8 @@
 package initialize
 
-import "utopia-back/pkg/redis"
+import "utopia-back/cache"
 
 func InitRedis() {
 	// 初始化redis
-	redis.Init()
+	cache.Init()
 }

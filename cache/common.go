@@ -1,7 +1,8 @@
-package redis
+package cache
 
 import (
 	"context"
+	"fmt"
 	"strconv"
 	"time"
 )
@@ -15,7 +16,17 @@ const (
 	TypeBool
 )
 
-// GetStringCache 从redis里面获取字符串缓存
+// VideoLikeCountKey 视频点赞数
+func VideoLikeCountKey(vid uint) string {
+	return fmt.Sprintf("like:count:%d", vid)
+}
+
+// VideoLikeCountKeyV2 视频点赞数
+func VideoLikeCountKeyV2(vid uint) string {
+	return fmt.Sprintf("v2:like:%d", vid)
+}
+
+// GetStringCache 从redis里面获取字符串缓存，失败则根据dalFunc回源并写入DB
 func GetStringCache(dalFunc func() (interface{}, error), key string, ResType int) (interface{}, error) {
 	//先去redis里面查找
 	resStr, err := RDB.Get(Ctx, key).Result()
