@@ -1,8 +1,11 @@
 package v2
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"net/http"
 	"utopia-back/http/controller/base"
+	"utopia-back/pkg/logger"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
 )
@@ -26,7 +29,11 @@ func (l *LikeController) Like(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(200, gin.H{"message": err.Error()})
+			c.JSON(http.StatusOK, &base.ResponseWithoutData{
+				Code: base.ErrorCode,
+				Msg:  err.Error(),
+			})
+			logger.Logger.Error(fmt.Sprintf("LikeV2 err:%+v", err))
 		}
 	}()
 

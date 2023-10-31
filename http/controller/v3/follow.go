@@ -1,9 +1,11 @@
 package v3
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"utopia-back/http/controller/base"
+	"utopia-back/pkg/logger"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
 )
@@ -31,6 +33,7 @@ func (f *FollowController) Follow(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
+			logger.Logger.Error(fmt.Sprintf("FollowV2 err:%+v", err))
 		}
 	}()
 
@@ -79,6 +82,7 @@ func (f *FollowController) FansList(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
+			logger.Logger.Error(fmt.Sprintf("FansListV2 err:%+v", err))
 		}
 	}()
 
@@ -112,6 +116,7 @@ func (f *FollowController) FollowList(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
+			logger.Logger.Error(fmt.Sprintf("FollowListV2 err:%+v", err))
 		}
 	}()
 

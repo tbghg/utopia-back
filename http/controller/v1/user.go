@@ -1,9 +1,11 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"utopia-back/http/controller/base"
+	"utopia-back/pkg/logger"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
 )
@@ -39,6 +41,7 @@ func (u *UserController) Login(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
+			logger.Logger.Error(fmt.Sprintf("Login err:%+v", err))
 		}
 	}()
 
@@ -81,6 +84,7 @@ func (u *UserController) Register(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
+			logger.Logger.Error(fmt.Sprintf("Register err:%+v", err))
 		}
 	}()
 
@@ -118,6 +122,7 @@ func (u *UserController) UpdateNickname(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
+			logger.Logger.Error(fmt.Sprintf("UpdateNickname err:%+v", err))
 		}
 	}()
 

@@ -25,8 +25,8 @@ func Router(r *gin.Engine) *gin.Engine {
 			testGroup.GET("/testUser/select/:id", ctrlV1.TestUserCtrl.Select)
 		}
 
-		userGroup := v1ApiGroup.Group("/user")
 		// 用户模块
+		userGroup := v1ApiGroup.Group("/user")
 		{
 			// 登录注册
 			userGroup.POST("/login", ctrlV1.UserCtrl.Login)
@@ -35,8 +35,9 @@ func Router(r *gin.Engine) *gin.Engine {
 			// 修改昵称
 			userGroup.POST("/nickname", middleware.JwtMiddleware, ctrlV1.UserCtrl.UpdateNickname)
 		}
-		interact := v1ApiGroup.Group("/interact").Use(middleware.JwtMiddleware)
+
 		// 交互模块
+		interact := v1ApiGroup.Group("/interact").Use(middleware.JwtMiddleware)
 		{
 			interact.POST("/like", ctrlV1.LikeCtrl.Like)               // 点赞/取消点赞
 			interact.POST("/follow", ctrlV1.FollowCtrl.Follow)         // 关注/取消关注
@@ -44,12 +45,14 @@ func Router(r *gin.Engine) *gin.Engine {
 			interact.GET("/follower/list", ctrlV1.FollowCtrl.FansList) // 获取粉丝列表
 			interact.GET("/follow/list", ctrlV1.FollowCtrl.FollowList) // 获取关注列表
 		}
+
 		// 存储模块
 		storageGroup := v1ApiGroup.Group("/upload")
 		{
 			storageGroup.GET("/token", middleware.JwtMiddleware, ctrlV1.StorageCtrl.UploadToken)
 			storageGroup.POST("/callback", ctrlV1.StorageCtrl.UploadCallback)
 		}
+
 		// 视频模块
 		videoGroup := v1ApiGroup.Group("/video")
 		{

@@ -1,6 +1,7 @@
 package v1
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"utopia-back/http/controller/base"
@@ -31,9 +32,7 @@ func (f *FavoriteController) Favorite(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
-
-			// 记录错误日志
-			logger.Logger.Error(err.Error())
+			logger.Logger.Error(fmt.Sprintf("Favorite err:%+v", err))
 		}
 	}()
 

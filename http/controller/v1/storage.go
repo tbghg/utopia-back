@@ -2,12 +2,14 @@ package v1
 
 import (
 	"errors"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"net/http"
 	"strconv"
 	"utopia-back/config"
 	"utopia-back/http/controller/base"
+	"utopia-back/pkg/logger"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
 )
@@ -64,6 +66,7 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 				Msg:  err.Error(),
 			})
 		}
+		logger.Logger.Error(fmt.Sprintf("UploadCallback err:%+v", err))
 	}()
 
 	// 校验是否为七牛云调用
