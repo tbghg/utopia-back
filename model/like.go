@@ -6,7 +6,7 @@ import (
 
 // Like 点赞表
 //
-// 视频ID-用户ID	唯一索引
+// 用户ID-视频ID	唯一索引
 // 视频ID-Status	索引
 // 更新时间 		索引
 type Like struct {

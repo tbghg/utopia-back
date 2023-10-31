@@ -2,7 +2,6 @@ package cache
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 	"time"
 )
@@ -15,16 +14,6 @@ const (
 	TypeInt64
 	TypeBool
 )
-
-// VideoLikeCountKey 视频点赞数
-func VideoLikeCountKey(vid uint) string {
-	return fmt.Sprintf("like:count:%d", vid)
-}
-
-// VideoLikeCountKeyV2 视频点赞数
-func VideoLikeCountKeyV2(vid uint) string {
-	return fmt.Sprintf("v2:like:%d", vid)
-}
 
 // GetStringCache 从redis里面获取字符串缓存，失败则根据dalFunc回源并写入DB
 func GetStringCache(dalFunc func() (interface{}, error), key string, ResType int) (interface{}, error) {

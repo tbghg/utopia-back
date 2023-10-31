@@ -10,6 +10,17 @@ import (
 
 type LikeDal struct{ Db *gorm.DB }
 
+func (l *LikeDal) GetUserLikedVideos(userId uint) (videoId []uint, err error) {
+	res := l.Db.Model(&model.Like{}).Select("id").
+		Where("user_id = ? AND status = ?", userId, true).
+		Order("updated_at desc").
+		Limit(750).Find(&videoId)
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return videoId, err
+}
+
 func (l *LikeDal) GetLikeUserId(videoId uint) (user []uint, err error) {
 	res := l.Db.Model(&model.Like{}).Where("video_id = ? AND status = ?", videoId, true).Find(&user)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {

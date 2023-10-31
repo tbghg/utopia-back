@@ -11,4 +11,6 @@ type LikeDal interface {
 	GetLikeCount(videoId uint) (count int64, err error)
 	// GetLikeUserId 获取点赞用户
 	GetLikeUserId(videoId uint) (user []uint, err error)
+	// GetUserLikedVideos 获取用户点过赞的视频id(前750条)
+	GetUserLikedVideos(userId uint) (videoId []uint, err error)
 }
