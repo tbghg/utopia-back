@@ -34,6 +34,7 @@ func Router(r *gin.Engine) *gin.Engine {
 
 			// 修改昵称
 			userGroup.POST("/nickname", middleware.JwtMiddleware, ctrlV1.UserCtrl.UpdateNickname)
+			userGroup.GET("/info", middleware.JwtMiddleware, ctrlV1.UserCtrl.GetUserInfo)
 		}
 
 		// 交互模块

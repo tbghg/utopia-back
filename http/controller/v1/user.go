@@ -118,7 +118,7 @@ func (u *UserController) UpdateNickname(c *gin.Context) {
 	)
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &base.ResponseWithData{
+			c.JSON(http.StatusOK, &base.ResponseWithoutData{
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
@@ -146,4 +146,38 @@ func (u *UserController) UpdateNickname(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, base.SuccessResponse)
+}
+
+func (u *UserController) GetUserInfo(c *gin.Context) {
+	var err error
+	defer func() {
+		if err != nil {
+			c.JSON(http.StatusOK, &base.ResponseWithoutData{
+				Code: base.ErrorCode,
+				Msg:  err.Error(),
+			})
+			logger.Logger.Error(fmt.Sprintf("UpdateNickname err:%+v", err))
+		}
+	}()
+
+	// 获取用户id
+	value, ok := c.Get("user_id")
+	uid, ok := value.(int)
+	if !ok {
+		err = base.UserIDInvalidError
+		return
+	}
+
+	info, err := u.UserService.GetUserInfo(uint(uid))
+	if err != nil {
+		return
+	}
+
+	c.JSON(http.StatusOK, &base.ResponseWithData{
+		Code: base.SuccessCode,
+		Msg:  "ok",
+		Data: info,
+	})
+
+	return
 }
