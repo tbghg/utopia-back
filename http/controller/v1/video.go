@@ -18,14 +18,14 @@ type VideoController struct {
 
 type VideoResp struct {
 	VideoInfo []*model.VideoInfo `json:"video_info"`
-	NextTime  uint               `json:"next_time"`
+	NextTime  int                `json:"next_time"`
 }
 
 func (v VideoController) GetCategoryVideos(c *gin.Context) {
 	var (
 		err        error
 		videoInfos []*model.VideoInfo
-		nextTime   uint
+		nextTime   int
 		uid        int
 	)
 	// 请求处理失败，返回错误信息

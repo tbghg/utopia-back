@@ -15,12 +15,12 @@ type VideoService struct {
 	LikeDal     abstract.LikeDal
 }
 
-func (v VideoService) GetCategoryVideos(uid uint, lastTime uint, videoTypeId uint) ([]*model.VideoInfo, uint, error) {
+func (v VideoService) GetCategoryVideos(uid uint, lastTime uint, videoTypeId uint) ([]*model.VideoInfo, int, error) {
 	var videoInfos []*model.VideoInfo
 	sLastTime := strconv.Itoa(int(lastTime / 1e3))
 	videos, err := v.VideoDal.GetVideoByType(sLastTime, videoTypeId)
 	if err != nil || len(videos) == 0 {
-		return nil, 0, err
+		return nil, -1, err
 	}
 
 	videoInfos = make([]*model.VideoInfo, len(videos))
@@ -35,7 +35,7 @@ func (v VideoService) GetCategoryVideos(uid uint, lastTime uint, videoTypeId uin
 
 		userInfo, err := v.UserDal.GetUserInfoById(videos[i].AuthorID)
 		if err != nil {
-			return nil, 0, err
+			return nil, -1, err
 		}
 
 		videoInfos[i].Author.ID = userInfo.ID
@@ -49,20 +49,20 @@ func (v VideoService) GetCategoryVideos(uid uint, lastTime uint, videoTypeId uin
 		if uid != 0 {
 			videoInfos[i].IsFollow, err = v.FollowDal.IsFollow(uid, videos[i].AuthorID)
 			if err != nil {
-				return nil, 0, err
+				return nil, -1, err
 			}
 			videoInfos[i].IsLike, err = v.LikeDal.IsLike(uid, videos[i].AuthorID)
 			if err != nil {
-				return nil, 0, err
+				return nil, -1, err
 			}
 			videoInfos[i].IsFavorite, err = v.FavoriteDal.IsFavorite(uid, videos[i].AuthorID)
 			if err != nil {
-				return nil, 0, err
+				return nil, -1, err
 			}
 		}
 	}
 	nextTime := videoInfos[len(videoInfos)-1].CreatedAt.UnixMilli()
-	return videoInfos, uint(nextTime), nil
+	return videoInfos, int(nextTime), nil
 }
 
 var _ abstract2.VideoService = (*VideoService)(nil)
