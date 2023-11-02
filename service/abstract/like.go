@@ -9,4 +9,6 @@ type LikeService interface {
 	IsLike(userId uint, videoId uint) (isLike bool, err error)
 	// GetLikeCount 获取点赞数
 	GetLikeCount(videoId uint) (count int64, err error)
+	// GetBatchIsLike 批量获取是否为视频点赞
+	//GetBatchIsLike(userId uint, videoId []uint) (isLike []bool, err error)
 }
