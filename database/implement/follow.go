@@ -33,15 +33,18 @@ func (f *FollowDal) UnFollow(userId uint, followId uint) (err error) {
 	return err
 }
 
+// GetFansList 获取粉丝列表
 func (f *FollowDal) GetFansList(userId uint) (list []model.UserInfo, err error) {
 	var users []model.UserInfo
 	//联表查询
 	res := f.Db.Model(model.Follow{}).
 		Select("users.*, COUNT(DISTINCT following.id) AS follow_count, COUNT(DISTINCT followers.id) AS fans_count").
-		Joins("LEFT JOIN users ON users.id = follows.user_id").
-		Joins("LEFT JOIN follows AS following ON following.user_id = users.id").
-		Joins("LEFT JOIN follows AS followers ON followers.follow_id = users.id").
-		Where("follows.follow_id IN (?)", userId).
+		// 拼接该用户的粉丝对应的user信息
+		Joins("JOIN users ON users.id = follows.user_id and users.is_del is not null and follows.status = 1 and follows.follow_id IN (?)", userId).
+		// 此处用LEFT，当关注数为0时会保留user，最后记数为0
+		Joins("LEFT JOIN follows AS following ON following.user_id = users.id and following.status = 1").
+		// 此处用LEFT，当粉丝数为0时会保留user，最后记数为0
+		Joins("LEFT JOIN follows AS followers ON followers.follow_id = users.id and followers.status = 1").
 		Group("follows.user_id").
 		Find(&users)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
@@ -56,10 +59,12 @@ func (f *FollowDal) GetFollowList(userId uint) (list []model.UserInfo, err error
 	//联表查询
 	res := f.Db.Model(model.Follow{}).
 		Select("users.*, COUNT(DISTINCT following.id) AS follow_count, COUNT(DISTINCT followers.id) AS fans_count").
-		Joins("LEFT JOIN users ON users.id = follows.follow_id").
-		Joins("LEFT JOIN follows AS following ON following.user_id = users.id").
-		Joins("LEFT JOIN follows AS followers ON followers.follow_id = users.id").
-		Where("follows.user_id IN (?)", userId).
+		// 拼接该用户的关注up对应的user信息
+		Joins("JOIN users ON users.id = follows.follow_id and users.is_del is not null and follows.status = 1 and follows.user_id IN (?)", userId).
+		// 此处用LEFT，当关注数为0时会保留user，最后记数为0
+		Joins("LEFT JOIN follows AS following ON following.user_id = users.id and following.status = 1").
+		// 此处用LEFT，当粉丝数为0时会保留user，最后记数为0
+		Joins("LEFT JOIN follows AS followers ON followers.follow_id = users.id and followers.status = 1").
 		Group("follows.follow_id").
 		Find(&users)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
