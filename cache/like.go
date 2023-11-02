@@ -12,10 +12,10 @@ import (
 const (
 	sMinVid                        = "minVid"
 	sTTL                           = "ttl"
-	maxFieldNum                    = 1500 // hash中最大字段数
-	setFieldNum                    = 750  // hash重设字段数
+	MaxFieldNum                    = 1500 // hash中最大字段数
+	SetFieldNum                    = 750  // hash重设字段数
 	userLikedVideoExpireTime       = time.Hour * 24 * 15
-	userLikedVidoeUpdateExpireTime = time.Hour * 24 * 15 / 3
+	userLikedVideoUpdateExpireTime = time.Hour * 24 * 15 / 3
 )
 
 // VideoLikeCountKey 视频点赞数
@@ -33,6 +33,23 @@ func VideoLikeCountKeyV2(vid uint) string {
 // 用户维度缓存点赞情况
 func UserLikedVideoKeyV3(uid uint) string {
 	return fmt.Sprintf("v3:like:%d", uid)
+}
+
+// HSetUserLikedVideo 用户点赞视频批量写入cache
+func HSetUserLikedVideo(uid uint, vid []uint) {
+	key := UserLikedVideoKeyV3(uid)
+
+	fields := make(map[string]interface{})
+	for _, v := range vid {
+		fields[strconv.Itoa(int(v))] = true
+	}
+
+	resHSet := RDB.HSet(Ctx, key, fields)
+	if err := resHSet.Err(); err != nil {
+		logger.Logger.Error(fmt.Sprintf("HSetUserLikedVideo RDB.HMSet cmd:%v", resHSet.String()))
+	} else {
+		logger.Logger.Info(fmt.Sprintf("HSetUserLikedVideo RDB.HMSet cmd:%v", resHSet.String()))
+	}
 }
 
 // IsUserLikedVideo 用户是否为某个视频点赞(单个)
@@ -87,6 +104,7 @@ func IsUserLikedVideo(uid uint, vid uint) (liked bool, state int) {
 // IsUserLikedVideos 用户是否为某些视频点赞(批量)
 //
 // result key为vid  <->  0未点赞；1为点赞；2 冷数据,需回源
+//
 // state 0 成功；1 不存在该key,需要新建；2 查询失败,需回源
 func IsUserLikedVideos(uid uint, videoIds []uint) (result map[uint]int, state int) {
 	key := UserLikedVideoKeyV3(uid)
@@ -186,18 +204,19 @@ func rebuildUserLikedVideos(key string) {
 		return videoIds[i] > videoIds[j]
 	})
 
-	if len(videoIds) < maxFieldNum {
-		logger.Logger.Info(fmt.Sprintf("rebuildUserLikedVideos len(videoIds):%v < maxFieldNum:%v 不需要重建", len(videoIds), maxFieldNum))
+	if len(videoIds) < MaxFieldNum {
+		logger.Logger.Info(fmt.Sprintf("rebuildUserLikedVideos len(videoIds):%v < MaxFieldNum:%v 不需要重建", len(videoIds), MaxFieldNum))
 		return
 	}
 
-	BuildUserLikedVideos(key, nil, videoIds[setFieldNum-1])
+	// 只是为了更新minVid、ttl、过期时间，不用传vid切片
+	BuildUserLikedVideos(key, nil, videoIds[SetFieldNum-1])
 
 	var builder strings.Builder
-	lastVids := videoIds[setFieldNum:]
-	for i, v := range lastVids {
+	lastVideos := videoIds[SetFieldNum:]
+	for i, v := range lastVideos {
 		builder.WriteString(strconv.Itoa(int(v)))
-		if i != len(lastVids)-1 {
+		if i != len(lastVideos)-1 {
 			builder.WriteString(" ")
 		}
 	}
@@ -221,10 +240,10 @@ func judgeRebuildVideoLikedVideos(key string, ttl int) {
 		logger.Logger.Info(fmt.Sprintf("judgeRebuildVideoLikedVideos RDB.HLen cmd:%v", resLen.String()))
 	}
 
-	if resLen.Val() > maxFieldNum { // 数量超过域值
+	if resLen.Val() > MaxFieldNum { // 数量超过域值
 		go rebuildUserLikedVideos(key)
 
-	} else if time.Unix(int64(ttl), 0).Sub(time.Now()) < userLikedVidoeUpdateExpireTime { // 剩余时间小于三分之一，重新续期
+	} else if time.Unix(int64(ttl), 0).Sub(time.Now()) < userLikedVideoUpdateExpireTime { // 剩余时间小于三分之一，重新续期
 
 		resExpire := RDB.Expire(Ctx, key, userLikedVideoExpireTime)
 		if err := resExpire.Err(); err != nil {

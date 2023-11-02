@@ -4,17 +4,41 @@ import (
 	"errors"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
+	"strconv"
+	"strings"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
 )
 
 type LikeDal struct{ Db *gorm.DB }
 
-func (l *LikeDal) GetUserLikedVideos(userId uint) (videoId []uint, err error) {
+// BatchIsLike 批量查询是否点过赞
+func (l *LikeDal) BatchIsLike(userId uint, videoIds []uint) (likedVideoIds []uint, err error) {
+
+	var builder strings.Builder
+	for i, v := range videoIds {
+		builder.WriteString(strconv.Itoa(int(v)))
+		if i != len(videoIds)-1 {
+			builder.WriteString(",")
+		}
+	}
+	fields := builder.String()
+
+	res := l.Db.Model(&model.Like{}).
+		Select("video_id").
+		Where("user_id = ? and status = 1 and video_id IN (?)", userId, fields).
+		Find(&likedVideoIds)
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return likedVideoIds, err
+}
+
+func (l *LikeDal) GetUserLikedVideosWithLimit(userId uint, itemNum int) (videoId []uint, err error) {
 	res := l.Db.Model(&model.Like{}).Select("id").
 		Where("user_id = ? AND status = ?", userId, true).
-		Order("updated_at desc").
-		Limit(750).Find(&videoId)
+		Order("id desc").
+		Limit(itemNum).Find(&videoId)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
