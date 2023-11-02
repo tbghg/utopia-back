@@ -37,7 +37,7 @@ func NewCenterControllerV1(dal *implement.CenterDal) *CenterControllerV1 {
 		UserService: &v12.UserService{UserDal: dal.UserDal},
 	}
 	favoriteCtrl := &v1.FavoriteController{
-		FavoriteService: &v12.FavoriteService{FavoriteDal: dal.FavoriteDal},
+		FavoriteService: &v12.FavoriteService{FavoriteDal: dal.FavoriteDal, VideoDal: dal.VideoDal},
 	}
 	storageCtrl := &v1.StorageController{
 		StorageService: &v12.StorageService{UserDal: dal.UserDal, VideoDal: dal.VideoDal},
