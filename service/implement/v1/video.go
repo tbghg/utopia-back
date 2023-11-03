@@ -1,7 +1,6 @@
 package v1
 
 import (
-	"strconv"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
 	abstract2 "utopia-back/service/abstract"
@@ -17,8 +16,7 @@ type VideoService struct {
 
 func (v VideoService) GetCategoryVideos(uid uint, lastTime uint, videoTypeId uint) ([]*model.VideoInfo, int, error) {
 	var videoInfos []*model.VideoInfo
-	sLastTime := strconv.Itoa(int(lastTime / 1e3))
-	videos, err := v.VideoDal.GetVideoByType(sLastTime, videoTypeId)
+	videos, err := v.VideoDal.GetVideoByType(lastTime, videoTypeId)
 	if err != nil || len(videos) == 0 {
 		return nil, -1, err
 	}

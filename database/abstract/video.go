@@ -8,5 +8,5 @@ type VideoDal interface {
 	// IsVideoExist 判断视频是否存在
 	IsVideoExist(videoId uint) (err error)
 	// GetVideoByType 查找某分区下的视频
-	GetVideoByType(lastTime string, videoTypeId uint) (video []*model.Video, err error)
+	GetVideoByType(lastTime uint, videoTypeId uint) (video []*model.Video, err error)
 }

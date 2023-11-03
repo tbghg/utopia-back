@@ -10,9 +10,9 @@ type VideoDal struct {
 	Db *gorm.DB
 }
 
-func (v *VideoDal) GetVideoByType(lastTime string, videoTypeId uint) (videos []*model.Video, err error) {
+func (v *VideoDal) GetVideoByType(lastTime uint, videoTypeId uint) (videos []*model.Video, err error) {
 	res := v.Db.Model(model.Video{}).
-		Where("created_at > from_unixtime(?) and video_type_id = ?", lastTime, videoTypeId).
+		Where("created_at >  FROM_UNIXTIME(? / 1000) + INTERVAL (? % 1000) MICROSECOND  and video_type_id = ?", lastTime, lastTime, videoTypeId).
 		Order("created_at").Limit(3).Find(&videos)
 	err = res.Error
 	return
