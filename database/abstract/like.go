@@ -2,9 +2,9 @@ package abstract
 
 type LikeDal interface {
 	// Like 点赞
-	Like(userId uint, videoId uint) (err error)
+	Like(userId uint, videoId uint) (rowsAffected int, err error)
 	// UnLike 取消点赞
-	UnLike(userId uint, videoId uint) (err error)
+	UnLike(userId uint, videoId uint) (rowsAffected int, err error)
 	// IsLike 是否点赞
 	IsLike(userId uint, videoId uint) (isLike bool, err error)
 	// GetLikeCount 获取点赞数
@@ -15,4 +15,6 @@ type LikeDal interface {
 	GetUserLikedVideosWithLimit(userId uint, itemNum int) (videoId []uint, err error)
 	// BatchIsLike 批量判断是否点赞
 	BatchIsLike(userId uint, videoId []uint) (videoIds []uint, err error)
+	// UpdateLikeCount 更新视频点赞数
+	UpdateLikeCount(videoId uint, num int)
 }

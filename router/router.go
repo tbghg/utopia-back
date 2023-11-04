@@ -86,6 +86,7 @@ func Router(r *gin.Engine) *gin.Engine {
 			interact.POST("/follow", ctrlV3.FollowCtrl.Follow)         // 关注/取消关注
 			interact.GET("/follower/list", ctrlV3.FollowCtrl.FansList) // 获取粉丝列表
 			interact.GET("/follow/list", ctrlV3.FollowCtrl.FollowList) // 获取关注列表
+			interact.POST("/like", ctrlV3.LikeCtrl.Like)               // 点赞/取消点赞
 		}
 	}
 

@@ -21,7 +21,7 @@ func (l LikeService) Like(userId uint, videoId uint) (err error) {
 		return err
 	}
 	//更新数据库
-	err = l.LikeDal.Like(userId, videoId)
+	_, err = l.LikeDal.Like(userId, videoId)
 	if err != nil {
 		return err
 	}
@@ -43,7 +43,7 @@ func (l LikeService) UnLike(userId uint, videoId uint) (err error) {
 	}
 
 	//更新数据库
-	err = l.LikeDal.UnLike(userId, videoId)
+	_, err = l.LikeDal.UnLike(userId, videoId)
 	if err != nil {
 		return err
 	}
@@ -53,7 +53,7 @@ func (l LikeService) UnLike(userId uint, videoId uint) (err error) {
 	if err != nil {
 		return err
 	}
-	return l.LikeDal.UnLike(userId, videoId)
+	return err
 }
 
 func (l LikeService) IsLike(userId uint, videoId uint) (isLike bool, err error) {

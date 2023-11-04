@@ -23,6 +23,13 @@ func (v *VideoDal) CreateVideo(video *model.Video) (id uint, err error) {
 	if res.Error != nil {
 		return 0, res.Error
 	}
+	resLC := v.Db.Create(&model.LikeCount{
+		Count:   0,
+		VideoID: video.ID,
+	})
+	if res.Error != nil {
+		return 0, resLC.Error
+	}
 	return video.ID, nil
 }
 

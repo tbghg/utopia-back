@@ -36,8 +36,15 @@ func UserLikedVideoKeyV3(uid uint) string {
 }
 
 // HSetUserLikedVideo 用户点赞视频批量写入cache
-func HSetUserLikedVideo(uid uint, vid []uint) {
+func HSetUserLikedVideo(uid uint, vid []uint) (status int) {
 	key := UserLikedVideoKeyV3(uid)
+
+	resHMGet := RDB.HMGet(Ctx, key, sTTL)
+	_, ok := resHMGet.Val()[0].(string)
+	if !ok {
+		// 不存在该key，需要先构建
+		return 1
+	}
 
 	fields := make(map[string]interface{})
 	for _, v := range vid {
@@ -49,6 +56,28 @@ func HSetUserLikedVideo(uid uint, vid []uint) {
 		logger.Logger.Error(fmt.Sprintf("HSetUserLikedVideo RDB.HMSet cmd:%v", resHSet.String()))
 	} else {
 		logger.Logger.Info(fmt.Sprintf("HSetUserLikedVideo RDB.HMSet cmd:%v", resHSet.String()))
+	}
+	return 0
+}
+
+// HDelUserLikedVideo 用户点赞视频批量写入cache
+func HDelUserLikedVideo(uid uint, videoIds []uint) {
+	key := UserLikedVideoKeyV3(uid)
+
+	var builder strings.Builder
+	for i, v := range videoIds {
+		builder.WriteString(strconv.Itoa(int(v)))
+		if i != len(videoIds)-1 {
+			builder.WriteString(" ")
+		}
+	}
+	fields := builder.String()
+
+	resDel := RDB.HDel(Ctx, key, fields)
+	if err := resDel.Err(); err != nil {
+		logger.Logger.Error(fmt.Sprintf("rebuildUserLikedVideos RDB.HDel cmd:%v", resDel.String()))
+	} else {
+		logger.Logger.Info(fmt.Sprintf("rebuildUserLikedVideos RDB.HDel cmd:%v", resDel.String()))
 	}
 }
 

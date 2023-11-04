@@ -35,7 +35,7 @@ func (l *LikeDal) BatchIsLike(userId uint, videoIds []uint) (likedVideoIds []uin
 }
 
 func (l *LikeDal) GetUserLikedVideosWithLimit(userId uint, itemNum int) (videoId []uint, err error) {
-	res := l.Db.Model(&model.Like{}).Select("id").
+	res := l.Db.Model(&model.Like{}).Select("video_id").
 		Where("user_id = ? AND status = ?", userId, true).
 		Order("id desc").
 		Limit(itemNum).Find(&videoId)
@@ -53,7 +53,7 @@ func (l *LikeDal) GetLikeUserId(videoId uint) (user []uint, err error) {
 	return user, err
 }
 
-func (l *LikeDal) Like(userId uint, videoId uint) (err error) {
+func (l *LikeDal) Like(userId uint, videoId uint) (rowsAffected int, err error) {
 	res := l.Db.Clauses(
 		clause.OnConflict{
 			Columns:   []clause.Column{{Name: "user_id"}, {Name: "video_id"}},
@@ -63,15 +63,29 @@ func (l *LikeDal) Like(userId uint, videoId uint) (err error) {
 		VideoID: videoId,
 		Status:  true,
 	})
-	return res.Error
+	return res.Error, int(res.RowsAffected)
 }
 
-func (l *LikeDal) UnLike(userId uint, videoId uint) (err error) {
-	res := l.Db.Model(&model.Like{}).Where("user_id = ? AND video_id = ?", userId, videoId).Update("status", false)
+func (l *LikeDal) UpdateLikeCount(videoId uint, num int) {
+	if num > 0 {
+		l.Db.Model(&model.LikeCount{}).
+			Where("video_id = ?", videoId).
+			UpdateColumn("count", gorm.Expr("count + ?", num))
+	} else if num < 0 {
+		l.Db.Model(&model.LikeCount{}).
+			Where("video_id = ?", videoId).
+			UpdateColumn("count", gorm.Expr("count - ?", -1*num))
+	}
+}
+
+func (l *LikeDal) UnLike(userId uint, videoId uint) (rowsAffected int, err error) {
+	res := l.Db.Model(&model.Like{}).
+		Where("user_id = ? AND video_id = ? AND status = 1", userId, videoId).
+		Update("status", false)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
-	return err
+	return err, int(res.RowsAffected)
 }
 
 func (l *LikeDal) IsLike(userId uint, videoId uint) (isLike bool, err error) {
