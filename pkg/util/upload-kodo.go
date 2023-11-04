@@ -44,7 +44,7 @@ func QuickUploadFile(localFile, key string) (string, error) {
 	ret, err := uploadFile(localFile, key, bucket, GetMac())
 	// 拼接返回完整的url
 	apiPath := config.V.GetString("qiniu.kodoApi")
-	return apiPath + ret, err
+	return apiPath + "/" + ret, err
 }
 
 // uploadFile 上传文件到七牛云
