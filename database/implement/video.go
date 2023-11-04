@@ -12,6 +12,17 @@ type VideoDal struct {
 	Db *gorm.DB
 }
 
+func (v *VideoDal) SearchVideos(search string, limitNum int) (videos []*model.Video, err error) {
+	res := v.Db.Model(model.Video{}).
+		Where("`describe` LIKE ?", search+"%").
+		Limit(limitNum).
+		Find(&videos)
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return
+}
+
 func (v *VideoDal) GetPopularVideos(limitNum int) (videoIds []uint, err error) {
 	type VideoCount struct {
 		VideoID uint

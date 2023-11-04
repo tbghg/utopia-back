@@ -26,6 +26,7 @@ const (
 	typeVideosLimit      = 3
 	popularVideosLimit   = 3
 	recommendVideosLimit = 3
+	searchVideosLimit    = 3
 )
 
 func (v VideoService) GetPopularVideos(uid uint) ([]*model.VideoInfo, error) {
@@ -71,9 +72,13 @@ func (v VideoService) GetUploadVideos(uid uint, targetUid uint, lastTime uint) (
 	return v.getVideoInfo(uid, videos)
 }
 
-func (v VideoService) SearchVideoAndUser(search string) ([]*model.VideoInfo, []*model.UserInfo, error) {
-	//TODO implement me
-	panic("implement me")
+func (v VideoService) SearchVideos(uid uint, search string) ([]*model.VideoInfo, error) {
+	videos, err := v.VideoDal.SearchVideos(search, searchVideosLimit)
+	if err != nil || len(videos) == 0 {
+		return nil, err
+	}
+	videoInfo, _, err := v.getVideoInfo(uid, videos)
+	return videoInfo, err
 }
 
 func (v VideoService) GetCategoryVideos(uid uint, lastTime uint, videoTypeId uint) ([]*model.VideoInfo, int, error) {
@@ -86,10 +91,9 @@ func (v VideoService) GetCategoryVideos(uid uint, lastTime uint, videoTypeId uin
 
 func (v VideoService) getVideoInfo(userId uint, videos []*model.Video) ([]*model.VideoInfo, int, error) {
 	var (
-		wg         sync.WaitGroup
-		liked      map[uint]bool // 用户是否为该视频点赞
-		videoInfos = make([]*model.VideoInfo, len(videos))
-		//authorInfos = make(map[uint]*model.UserInfo)
+		wg          sync.WaitGroup
+		liked       map[uint]bool // 用户是否为该视频点赞
+		videoInfos  = make([]*model.VideoInfo, len(videos))
 		authorInfos sync.Map
 		videoIds    = make([]uint, 0, len(videos))
 		authorIds   = make([]uint, 0)

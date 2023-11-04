@@ -220,5 +220,43 @@ func (v VideoController) GetFavoriteVideos(c *gin.Context) {
 
 // SearchVideosByDescribe 搜索视频
 func (v VideoController) SearchVideosByDescribe(c *gin.Context) {
-	return
+	var (
+		err        error
+		videoInfos []*model.VideoInfo
+		uid        int
+	)
+	// 请求处理失败，返回错误信息
+	defer func() {
+		if err != nil {
+			c.JSON(http.StatusOK, &base.ResponseWithData{
+				Code: base.ErrorCode,
+				Msg:  err.Error(),
+			})
+			logger.Logger.Error(fmt.Sprintf("SearchVideosByDescribe err:%+v", err))
+		}
+	}()
+
+	search, ok := c.GetQuery("search")
+	if !ok {
+		err = errors.New("search 参数错误")
+		return
+	}
+
+	// 获取用户id
+	if value, ok := c.Get("user_id"); ok {
+		uid, _ = value.(int)
+	}
+
+	videoInfos, err = v.VideoService.SearchVideos(uint(uid), search)
+	if err != nil {
+		return
+	}
+
+	c.JSON(http.StatusOK, &base.ResponseWithData{
+		Code: base.SuccessCode,
+		Msg:  "ok",
+		Data: VideoRespWithoutTime{
+			VideoInfo: videoInfos,
+		},
+	})
 }
