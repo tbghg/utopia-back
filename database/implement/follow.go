@@ -84,7 +84,7 @@ func (f *FollowDal) IsFollow(userId uint, followId uint) (isFollow bool, err err
 
 func (f *FollowDal) GetFollowCount(userId uint) (count int64, err error) {
 	var follow model.Follow
-	res := f.Db.Where("user_id = ?", userId).Find(&follow).Count(&count)
+	res := f.Db.Where("user_id = ? AND status = 1", userId).Find(&follow).Count(&count)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
@@ -93,7 +93,7 @@ func (f *FollowDal) GetFollowCount(userId uint) (count int64, err error) {
 
 func (f *FollowDal) GetFansCount(userId uint) (count int64, err error) {
 	var follow model.Follow
-	res := f.Db.Where("follow_id = ?", userId).Find(&follow).Count(&count)
+	res := f.Db.Where("follow_id = ? AND status = 1", userId).Find(&follow).Count(&count)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
@@ -102,7 +102,7 @@ func (f *FollowDal) GetFansCount(userId uint) (count int64, err error) {
 
 // GetFansIdList 获取粉丝id列表
 func (f *FollowDal) GetFansIdList(userId uint) (fansIdList []uint, err error) {
-	res := f.Db.Model(&model.Follow{}).Select("user_id").Where("follow_id = ?", userId).Find(&fansIdList)
+	res := f.Db.Model(&model.Follow{}).Select("user_id").Where("follow_id = ? AND status = 1", userId).Find(&fansIdList)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
@@ -111,7 +111,7 @@ func (f *FollowDal) GetFansIdList(userId uint) (fansIdList []uint, err error) {
 
 // GetFollowIdList 获取自己关注的用户id列表
 func (f *FollowDal) GetFollowIdList(userId uint) (followIdList []uint, err error) {
-	res := f.Db.Model(&model.Follow{}).Select("follow_id").Where("user_id = ?", userId).Find(&followIdList)
+	res := f.Db.Model(&model.Follow{}).Select("follow_id").Where("user_id = ? AND status = 1", userId).Find(&followIdList)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}

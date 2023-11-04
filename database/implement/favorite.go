@@ -42,7 +42,7 @@ func (f FavoriteDal) CancelFavorite(userId uint, video uint) (err error) {
 
 func (f FavoriteDal) GetFavoriteList(userId uint) (list []uint, err error) {
 	//返回的是videoId的列表
-	res := f.Db.Where("user_id = ?", userId).Select("video_id").Find(&list)
+	res := f.Db.Where("user_id = ? AND status = 1", userId).Select("video_id").Find(&list)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
@@ -60,7 +60,7 @@ func (f FavoriteDal) IsFavorite(userId uint, videoId uint) (isFavorite bool, err
 
 func (f FavoriteDal) GetFavoriteCount(videoId uint) (count int64, err error) {
 	var favorite model.Favorite
-	res := f.Db.Where("video_id = ?", videoId).Find(&favorite).Count(&count)
+	res := f.Db.Where("video_id = ? AND status = 1", videoId).Find(&favorite).Count(&count)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
