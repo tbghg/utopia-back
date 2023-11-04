@@ -51,7 +51,7 @@ func (f FavoriteDal) GetFavoriteList(userId uint) (list []uint, err error) {
 
 func (f FavoriteDal) IsFavorite(userId uint, videoId uint) (isFavorite bool, err error) {
 	var favorite model.Favorite
-	res := f.Db.Where("user_id = ? AND video_id = ?", userId, videoId).First(&favorite)
+	res := f.Db.Where("user_id = ? AND video_id = ? AND status = 1", userId, videoId).First(&favorite)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
