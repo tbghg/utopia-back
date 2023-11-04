@@ -21,6 +21,10 @@ type VideoResp struct {
 	NextTime  int                `json:"next_time"`
 }
 
+type VideoRespWithoutTime struct {
+	VideoInfo []*model.VideoInfo `json:"video_info"`
+}
+
 func (v VideoController) GetCategoryVideos(c *gin.Context) {
 	var (
 		err        error
@@ -72,7 +76,39 @@ func (v VideoController) GetCategoryVideos(c *gin.Context) {
 
 // GetPopularVideos 获取热门视频
 func (v VideoController) GetPopularVideos(c *gin.Context) {
-	return
+	var (
+		err        error
+		videoInfos []*model.VideoInfo
+		uid        int
+	)
+	// 请求处理失败，返回错误信息
+	defer func() {
+		if err != nil {
+			c.JSON(http.StatusOK, &base.ResponseWithData{
+				Code: base.ErrorCode,
+				Msg:  err.Error(),
+			})
+			logger.Logger.Error(fmt.Sprintf("GetUploadVideos err:%+v", err))
+		}
+	}()
+
+	// 获取用户id
+	if value, ok := c.Get("user_id"); ok {
+		uid, _ = value.(int)
+	}
+
+	videoInfos, err = v.VideoService.GetPopularVideos(uint(uid))
+	if err != nil {
+		return
+	}
+
+	c.JSON(http.StatusOK, &base.ResponseWithData{
+		Code: base.SuccessCode,
+		Msg:  "ok",
+		Data: VideoRespWithoutTime{
+			VideoInfo: videoInfos,
+		},
+	})
 }
 
 // GetRecommendVideos 获取推荐视频

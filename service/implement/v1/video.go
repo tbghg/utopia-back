@@ -28,9 +28,17 @@ const (
 	recommendVideosLimit = 3
 )
 
-func (v VideoService) GetPopularVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error) {
-	//TODO implement me
-	panic("implement me")
+func (v VideoService) GetPopularVideos(uid uint) ([]*model.VideoInfo, error) {
+	videoIds, err := v.VideoDal.GetPopularVideos(popularVideosLimit)
+	if err != nil || len(videoIds) == 0 {
+		return nil, err
+	}
+	videos, err := v.VideoDal.GetVideoInfoById(videoIds)
+	if err != nil {
+		return nil, err
+	}
+	info, _, err := v.getVideoInfo(uid, videos)
+	return info, err
 }
 
 func (v VideoService) GetRecommendVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error) {
@@ -46,11 +54,11 @@ func (v VideoService) GetFavoriteVideos(uid uint, targetUid uint, lastTime uint)
 	}
 	videos, err := v.VideoDal.GetVideoInfoById(videoIds)
 	if err != nil {
-		return nil, 0, err
+		return nil, -1, err
 	}
 	videoInfos, _, err = v.getVideoInfo(uid, videos)
 	if err != nil {
-		return nil, 0, err
+		return nil, -1, err
 	}
 	return
 }

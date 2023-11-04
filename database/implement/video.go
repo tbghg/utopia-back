@@ -1,13 +1,42 @@
 package implement
 
 import (
+	"errors"
 	"gorm.io/gorm"
+	"time"
 	"utopia-back/database/abstract"
 	"utopia-back/model"
 )
 
 type VideoDal struct {
 	Db *gorm.DB
+}
+
+func (v *VideoDal) GetPopularVideos(limitNum int) (videoIds []uint, err error) {
+	type VideoCount struct {
+		VideoID uint
+		Count   int
+	}
+	var videoCounts []*VideoCount
+
+	startTIme := time.Now().Add(-24 * time.Hour).UnixMilli()
+	// 一小时内点赞量最高的视频
+	res := v.Db.Model(model.Like{}).
+		Select("video_id, COUNT(*) as count").
+		Where("status = 1").
+		Where("updated_at > FROM_UNIXTIME(? / 1000) + INTERVAL (? % 1000) MICROSECOND", startTIme, startTIme).
+		Group("video_id").
+		Order("count DESC").
+		Limit(limitNum).
+		Find(&videoCounts)
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+
+	for _, vc := range videoCounts {
+		videoIds = append(videoIds, vc.VideoID)
+	}
+	return videoIds, err
 }
 
 func (v *VideoDal) GetVideoInfoById(videoIds []uint) (videos []*model.Video, err error) {
@@ -33,9 +62,11 @@ func (v *VideoDal) GetVideoInfoById(videoIds []uint) (videos []*model.Video, err
 
 func (v *VideoDal) GetUploadVideos(lastTime uint, uid uint, limitNum int) (videos []*model.Video, err error) {
 	res := v.Db.Model(model.Video{}).
-		Where("created_at >  FROM_UNIXTIME(? / 1000) + INTERVAL (? % 1000) MICROSECOND AND author_id = ?", lastTime, lastTime, uid).
+		Where("created_at > FROM_UNIXTIME(? / 1000) + INTERVAL (? % 1000) MICROSECOND AND author_id = ?", lastTime, lastTime, uid).
 		Order("created_at").Limit(limitNum).Find(&videos)
-	err = res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
 	return
 }
 
@@ -43,7 +74,9 @@ func (v *VideoDal) GetVideoByType(lastTime uint, videoTypeId uint, limitNum int)
 	res := v.Db.Model(model.Video{}).
 		Where("created_at >  FROM_UNIXTIME(? / 1000) + INTERVAL (? % 1000) MICROSECOND  and video_type_id = ?", lastTime, lastTime, videoTypeId).
 		Order("created_at").Limit(limitNum).Find(&videos)
-	err = res.Error
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
 	return
 }
 
@@ -56,7 +89,7 @@ func (v *VideoDal) CreateVideo(video *model.Video) (id uint, err error) {
 		Count:   0,
 		VideoID: video.ID,
 	})
-	if res.Error != nil {
+	if resLC.Error != nil {
 		return 0, resLC.Error
 	}
 	return video.ID, nil
