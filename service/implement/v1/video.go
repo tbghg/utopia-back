@@ -113,7 +113,7 @@ func (v VideoService) getVideoInfo(userId uint, videos []*model.Video) ([]*model
 
 			if userId != 0 {
 				// 是否收藏
-				videoInfos[i].IsFavorite, err = v.FavoriteDal.IsFavorite(userId, videos[i].AuthorID)
+				videoInfos[i].IsFavorite, err = v.FavoriteDal.IsFavorite(userId, videos[i].ID)
 				if err != nil {
 					logger.Logger.Error(fmt.Sprintf("v.FavoriteDal.IsFavorite userId:%v authorId:%v err:%+v", userId, videos[i].AuthorID, err))
 				}
