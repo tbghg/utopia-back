@@ -63,7 +63,7 @@ func (l *LikeDal) Like(userId uint, videoId uint) (rowsAffected int, err error) 
 		VideoID: videoId,
 		Status:  true,
 	})
-	return res.Error, int(res.RowsAffected)
+	return int(res.RowsAffected), res.Error
 }
 
 func (l *LikeDal) UpdateLikeCount(videoId uint, num int) {
@@ -85,7 +85,7 @@ func (l *LikeDal) UnLike(userId uint, videoId uint) (rowsAffected int, err error
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
-	return err, int(res.RowsAffected)
+	return int(res.RowsAffected), err
 }
 
 func (l *LikeDal) IsLike(userId uint, videoId uint) (isLike bool, err error) {
