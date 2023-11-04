@@ -37,6 +37,9 @@ type VideoInfo struct {
 	IsFollow   bool `json:"is_follow"`   // 是否关注该作者
 	IsLike     bool `json:"is_like"`     // 是否点赞过
 	IsFavorite bool `json:"is_favorite"` // 是否收藏过
+
+	LikeCount     int `json:"like_count"`     // 点赞数
+	FavoriteCount int `json:"favorite_count"` // 点赞数
 }
 
 // AuthorInfo 作者信息

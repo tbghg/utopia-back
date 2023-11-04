@@ -98,12 +98,11 @@ func (l *LikeDal) IsLike(userId uint, videoId uint) (isLike bool, err error) {
 }
 
 func (l *LikeDal) GetLikeCount(videoId uint) (count int64, err error) {
-	var likeCount int64
-	res := l.Db.Model(&model.Like{}).Where("video_id = ?", videoId).Count(&likeCount)
+	res := l.Db.Model(&model.LikeCount{}).Select("count").Where("video_id = ?", videoId).Find(&count)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
-	return likeCount, err
+	return count, err
 }
 
 var _ abstract.LikeDal = (*LikeDal)(nil)

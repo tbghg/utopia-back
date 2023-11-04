@@ -27,7 +27,7 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 
 	// 获取用户的关注数
 	var followCount int64
-	res := u.Db.Model(&model.Follow{}).Where("user_id = ?", id).Count(&followCount)
+	res := u.Db.Model(&model.Follow{}).Where("user_id = ? AND status = 1", id).Count(&followCount)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
@@ -38,7 +38,7 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 
 	// 获取用户的粉丝数
 	var fansCount int64
-	res = u.Db.Model(&model.Follow{}).Where("follow_id = ?", id).Count(&fansCount)
+	res = u.Db.Model(&model.Follow{}).Where("follow_id = ? AND status = 1", id).Count(&fansCount)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
@@ -49,7 +49,7 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 
 	// 获取用户的视频作品数
 	var videoCount int64
-	res = u.Db.Model(&model.Video{}).Where("author_id = ?", id).Count(&videoCount)
+	res = u.Db.Model(&model.Video{}).Where("author_id = ? AND deleted_at is NULL", id).Count(&videoCount)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
