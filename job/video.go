@@ -23,6 +23,8 @@ func videoJobInit(dal *implement.CenterDal) {
 	go v.updatePopularVideos()
 }
 
+// 热门视频缓存 每隔一小时更新一次
+// 存入zset，通过score判断此时取到的位置
+// 需要一个version来标记缓存版本是否更新，如更新忽略score直接重新取
 func (v *videoJob) updatePopularVideos() {
-
 }

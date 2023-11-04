@@ -15,7 +15,6 @@ type UserService struct {
 }
 
 func (u *UserService) GetUserInfo(id uint) (userInfo model.UserInfo, err error) {
-
 	return u.UserDal.GetUserInfoById(id)
 }
 
