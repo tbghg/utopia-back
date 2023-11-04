@@ -10,9 +10,9 @@ type VideoService interface {
 	// GetRecommendVideos 获取推荐视频
 	GetRecommendVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error)
 	// GetFavoriteVideos 收藏视频列表
-	GetFavoriteVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error)
+	GetFavoriteVideos(uid uint, targetUid uint, lastTime uint) (videoInfos []*model.VideoInfo, nextTime int, err error)
 	// GetUploadVideos 发布视频列表
-	GetUploadVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error)
+	GetUploadVideos(uid uint, targetUid uint, lastTime uint) ([]*model.VideoInfo, int, error)
 	// SearchVideoAndUser 搜索
 	SearchVideoAndUser(search string) ([]*model.VideoInfo, []*model.UserInfo, error)
 }

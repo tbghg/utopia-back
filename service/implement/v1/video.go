@@ -18,6 +18,16 @@ type VideoService struct {
 	LikeDal     abstract.LikeDal
 }
 
+const (
+	// -1为不限制
+	// todo 为方便调试，先写为3，之后改为20
+	favoriteVideosLimit  = 3
+	uploadVideosLimit    = 3
+	typeVideosLimit      = 3
+	popularVideosLimit   = 3
+	recommendVideosLimit = 3
+)
+
 func (v VideoService) GetPopularVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error) {
 	//TODO implement me
 	panic("implement me")
@@ -28,14 +38,29 @@ func (v VideoService) GetRecommendVideos(uid uint, lastTime uint) ([]*model.Vide
 	panic("implement me")
 }
 
-func (v VideoService) GetFavoriteVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error) {
-	//TODO implement me
-	panic("implement me")
+func (v VideoService) GetFavoriteVideos(uid uint, targetUid uint, lastTime uint) (videoInfos []*model.VideoInfo, nextTime int, err error) {
+	var videoIds []uint
+	videoIds, nextTime, err = v.FavoriteDal.GetFavoriteList(targetUid, lastTime, favoriteVideosLimit)
+	if err != nil || len(videoIds) == 0 {
+		return nil, -1, err
+	}
+	videos, err := v.VideoDal.GetVideoInfoById(videoIds)
+	if err != nil {
+		return nil, 0, err
+	}
+	videoInfos, _, err = v.getVideoInfo(uid, videos)
+	if err != nil {
+		return nil, 0, err
+	}
+	return
 }
 
-func (v VideoService) GetUploadVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error) {
-	//TODO implement me
-	panic("implement me")
+func (v VideoService) GetUploadVideos(uid uint, targetUid uint, lastTime uint) ([]*model.VideoInfo, int, error) {
+	videos, err := v.VideoDal.GetUploadVideos(lastTime, targetUid, uploadVideosLimit)
+	if err != nil || len(videos) == 0 {
+		return nil, -1, err
+	}
+	return v.getVideoInfo(uid, videos)
 }
 
 func (v VideoService) SearchVideoAndUser(search string) ([]*model.VideoInfo, []*model.UserInfo, error) {
@@ -44,7 +69,7 @@ func (v VideoService) SearchVideoAndUser(search string) ([]*model.VideoInfo, []*
 }
 
 func (v VideoService) GetCategoryVideos(uid uint, lastTime uint, videoTypeId uint) ([]*model.VideoInfo, int, error) {
-	videos, err := v.VideoDal.GetVideoByType(lastTime, videoTypeId)
+	videos, err := v.VideoDal.GetVideoByType(lastTime, videoTypeId, typeVideosLimit)
 	if err != nil || len(videos) == 0 {
 		return nil, -1, err
 	}

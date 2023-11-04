@@ -40,13 +40,25 @@ func (f FavoriteDal) CancelFavorite(userId uint, video uint) (err error) {
 	return err
 }
 
-func (f FavoriteDal) GetFavoriteList(userId uint) (list []uint, err error) {
+func (f FavoriteDal) GetFavoriteList(userId uint, lastTime uint, limitNum int) (list []uint, nextTime int, err error) {
+	var favorites []*model.Favorite
 	//返回的是videoId的列表
-	res := f.Db.Where("user_id = ? AND status = 1", userId).Select("video_id").Find(&list)
+	res := f.Db.Where("user_id = ? AND updated_at > FROM_UNIXTIME(? / 1000) + INTERVAL (? % 1000) MICROSECOND AND status = 1", userId, lastTime, lastTime).
+		Select("video_id,updated_at").
+		Order("updated_at").
+		Limit(limitNum).
+		Find(&favorites)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
-	return list, err
+	if len(favorites) == 0 {
+		return
+	}
+	for _, v := range favorites {
+		list = append(list, v.VideoID)
+	}
+	nextTime = int(favorites[len(favorites)-1].UpdatedAt.UnixMilli())
+	return list, nextTime, err
 }
 
 func (f FavoriteDal) IsFavorite(userId uint, videoId uint) (isFavorite bool, err error) {
