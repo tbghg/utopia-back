@@ -20,13 +20,12 @@ type VideoService struct {
 
 const (
 	// -1为不限制
-	// todo 为方便调试，先写为3，之后改为20
-	favoriteVideosLimit  = 3
-	uploadVideosLimit    = 3
-	typeVideosLimit      = 3
-	popularVideosLimit   = 3
-	recommendVideosLimit = 3
-	searchVideosLimit    = 3
+	favoriteVideosLimit  = 20
+	uploadVideosLimit    = 20
+	typeVideosLimit      = 20
+	popularVideosLimit   = 20
+	recommendVideosLimit = 20
+	searchVideosLimit    = 20
 )
 
 func (v VideoService) GetPopularVideos(uid uint) ([]*model.VideoInfo, error) {
