@@ -49,7 +49,7 @@ func (u *UserDal) GetUserInfoById(id uint) (userInfo model.UserInfo, err error) 
 
 	// 获取用户的视频作品数
 	var videoCount int64
-	res = u.Db.Model(&model.Video{}).Where("author_id = ? AND deleted_at is NOT NULL", id).Count(&videoCount)
+	res = u.Db.Model(&model.Video{}).Where("author_id = ?", id).Count(&videoCount)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
