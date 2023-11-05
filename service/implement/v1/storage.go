@@ -15,13 +15,14 @@ func (v *StorageService) UpdateAvatar(uid uint, url string) error {
 	return v.UserDal.UpdateAvatar(uid, url)
 }
 
-func (v *StorageService) UploadVideoCallback(authorId uint, url string, coverUrl string, describe string, videoTypeId uint) (err error) {
+func (v *StorageService) UploadVideoCallback(authorId uint, url string, coverUrl string, describe string, title string, videoTypeId uint) (err error) {
 	video := &model.Video{
 		AuthorID:    authorId,
 		PlayUrl:     url,
 		CoverUrl:    coverUrl,
 		VideoTypeID: videoTypeId,
 		Describe:    describe,
+		Title:       title,
 	}
 	_, err = v.VideoDal.CreateVideo(video)
 	if err != nil {

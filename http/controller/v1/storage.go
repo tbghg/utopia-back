@@ -29,6 +29,7 @@ type uploadCallbackReq struct {
 	VideoTypeId string `json:"video_type_id"`
 	CoverUrl    string `json:"cover_url"`
 	Describe    string `json:"describe"`
+	Title       string `json:"title"`
 }
 
 type callbackData struct {
@@ -104,7 +105,7 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 		})
 		return
 	}
-	err = v.StorageService.UploadVideoCallback(uid, url, r.CoverUrl, r.Describe, videoTypeId)
+	err = v.StorageService.UploadVideoCallback(uid, url, r.CoverUrl, r.Describe, r.Title, videoTypeId)
 	if err != nil {
 		return
 	}

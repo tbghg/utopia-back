@@ -20,6 +20,7 @@ type Video struct {
 	CoverUrl    string `gorm:"type:varchar(256);not null" json:"cover_url"`               // 视频封面
 	VideoTypeID uint   `gorm:"not null" json:"video_type_id"`                             // 视频类型
 	Describe    string `gorm:"type:varchar(256)" json:"describe"`                         // 描述
+	Title       string `gorm:"type:varchar(256)" json:"title"`                            // 标题
 }
 
 // VideoInfo 视频信息
@@ -31,6 +32,7 @@ type VideoInfo struct {
 	CoverUrl    string `json:"cover_url"`     // 视频封面
 	VideoTypeID uint   `json:"video_type_id"` // 视频类型
 	Describe    string `json:"describe"`      // 描述
+	Title       string `json:"title"`         // 标题
 
 	Author AuthorInfo `json:"author"` // 作者信息
 

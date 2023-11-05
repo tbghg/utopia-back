@@ -218,8 +218,8 @@ func (v VideoController) GetFavoriteVideos(c *gin.Context) {
 	})
 }
 
-// SearchVideosByDescribe 搜索视频
-func (v VideoController) SearchVideosByDescribe(c *gin.Context) {
+// SearchVideos 搜索视频
+func (v VideoController) SearchVideos(c *gin.Context) {
 	var (
 		err        error
 		videoInfos []*model.VideoInfo
@@ -232,7 +232,7 @@ func (v VideoController) SearchVideosByDescribe(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
-			logger.Logger.Error(fmt.Sprintf("SearchVideosByDescribe err:%+v", err))
+			logger.Logger.Error(fmt.Sprintf("SearchVideos err:%+v", err))
 		}
 	}()
 

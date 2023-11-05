@@ -9,7 +9,7 @@ import (
 
 const (
 	callbackPath     = "/api/v1/upload/callback"
-	callbackBody     = `{"key":"$(key)","file_type":"$(x:file_type)","uid":"$(x:uid)","cover_url":"$(x:cover_url)","describe":"$(x:describe)","video_type_id":"$(x:video_type_id)"}`
+	callbackBody     = `{"key":"$(key)","file_type":"$(x:file_type)","uid":"$(x:uid)","cover_url":"$(x:cover_url)","describe":"$(x:describe)","title":"$(x:title)","video_type_id":"$(x:video_type_id)"}`
 	callbackBodyType = "application/json"
 )
 

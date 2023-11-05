@@ -197,6 +197,7 @@ func (v VideoService) getVideoInfo(userId uint, videos []*model.Video) ([]*model
 		videoInfos[i].CoverUrl = videos[i].CoverUrl
 		videoInfos[i].VideoTypeID = videos[i].VideoTypeID
 		videoInfos[i].Describe = videos[i].Describe
+		videoInfos[i].Title = videos[i].Title
 
 		// 作者信息 是否关注作者
 		if userInfoStructInterface, ok := authorInfos.Load(videos[i].AuthorID); ok {

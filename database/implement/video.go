@@ -14,7 +14,7 @@ type VideoDal struct {
 
 func (v *VideoDal) SearchVideos(search string, limitNum int) (videos []*model.Video, err error) {
 	res := v.Db.Model(model.Video{}).
-		Where("`describe` LIKE ?", search+"%").
+		Where("`title` LIKE ?", search+"%").
 		Limit(limitNum).
 		Find(&videos)
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
