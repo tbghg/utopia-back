@@ -54,3 +54,9 @@ type AuthorInfo struct {
 	FollowCount int64  `json:"follow_count"` // 关注数
 	VideoCount  int64  `json:"video_count"`  // 视频数
 }
+
+type VideoCount struct {
+	VideoID uint
+	Count   int
+	Score   float64
+}

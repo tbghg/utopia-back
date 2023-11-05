@@ -12,7 +12,7 @@ type VideoDal interface {
 	// GetUploadVideos 查找某分区下的视频
 	GetUploadVideos(lastTime uint, uid uint, limitNum int) (videos []*model.Video, err error)
 	// GetPopularVideos 获取热门视频
-	GetPopularVideos(limitNum int) (videoIds []uint, err error)
+	GetPopularVideos(limitNum int) (videoIds []*model.VideoCount, err error)
 	// GetVideoInfoById 获取视频信息
 	GetVideoInfoById(videoIds []uint) (videos []*model.Video, err error)
 	// SearchVideos 查找视频

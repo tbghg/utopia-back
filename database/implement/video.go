@@ -23,12 +23,9 @@ func (v *VideoDal) SearchVideos(search string, limitNum int) (videos []*model.Vi
 	return
 }
 
-func (v *VideoDal) GetPopularVideos(limitNum int) (videoIds []uint, err error) {
-	type VideoCount struct {
-		VideoID uint
-		Count   int
-	}
-	var videoCounts []*VideoCount
+func (v *VideoDal) GetPopularVideos(limitNum int) (videoIds []*model.VideoCount, err error) {
+
+	var videoCounts []*model.VideoCount
 
 	startTIme := time.Now().Add(-24 * time.Hour).UnixMilli()
 	// 一小时内点赞量最高的视频
@@ -43,11 +40,7 @@ func (v *VideoDal) GetPopularVideos(limitNum int) (videoIds []uint, err error) {
 	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
 		err = res.Error
 	}
-
-	for _, vc := range videoCounts {
-		videoIds = append(videoIds, vc.VideoID)
-	}
-	return videoIds, err
+	return videoCounts, err
 }
 
 func (v *VideoDal) GetVideoInfoById(videoIds []uint) (videos []*model.Video, err error) {

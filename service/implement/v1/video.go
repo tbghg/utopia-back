@@ -28,17 +28,30 @@ const (
 	searchVideosLimit    = 20
 )
 
-func (v VideoService) GetPopularVideos(uid uint) ([]*model.VideoInfo, error) {
-	videoIds, err := v.VideoDal.GetPopularVideos(popularVideosLimit)
-	if err != nil || len(videoIds) == 0 {
-		return nil, err
+func (v VideoService) GetPopularVideos(uid uint, version int, score float64) (videoInfo []*model.VideoInfo, nextScore float64, nextVersion int, err error) {
+	var (
+		ids []uint
+		ok  bool
+	)
+	// 尝试从缓存中获取
+	ids, nextScore, nextVersion, ok = cache.GetPopularVideo(version, score, popularVideosLimit)
+	if !ok { // 从缓存中获取失败，回源，重新查DB
+		videos, err := v.VideoDal.GetPopularVideos(popularVideosLimit)
+		if err != nil || len(videos) == 0 {
+			return nil, -1, nextVersion, err
+		}
+		ids = []uint{}
+		for _, v := range videos {
+			ids = append(ids, v.VideoID)
+		}
 	}
-	videos, err := v.VideoDal.GetVideoInfoById(videoIds)
-	if err != nil {
-		return nil, err
+
+	videos, err := v.VideoDal.GetVideoInfoById(ids)
+	if err != nil || len(videos) == 0 {
+		return nil, -1, nextVersion, err
 	}
 	info, _, err := v.getVideoInfo(uid, videos)
-	return info, err
+	return info, nextScore, nextVersion, err
 }
 
 func (v VideoService) GetRecommendVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error) {

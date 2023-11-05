@@ -25,6 +25,12 @@ type VideoRespWithoutTime struct {
 	VideoInfo []*model.VideoInfo `json:"video_info"`
 }
 
+type PopularVideoResp struct {
+	VideoInfo []*model.VideoInfo `json:"video_info"`
+	Score     float64            `json:"score"`
+	Version   int                `json:"version"`
+}
+
 func (v VideoController) GetCategoryVideos(c *gin.Context) {
 	var (
 		err        error
@@ -77,9 +83,11 @@ func (v VideoController) GetCategoryVideos(c *gin.Context) {
 // GetPopularVideos 获取热门视频
 func (v VideoController) GetPopularVideos(c *gin.Context) {
 	var (
-		err        error
-		videoInfos []*model.VideoInfo
-		uid        int
+		err              error
+		videoInfos       []*model.VideoInfo
+		uid              int
+		score, nextScore float64
+		nextVersion      int
 	)
 	// 请求处理失败，返回错误信息
 	defer func() {
@@ -92,12 +100,26 @@ func (v VideoController) GetPopularVideos(c *gin.Context) {
 		}
 	}()
 
+	sVersion, _ := c.GetQuery("version")
+	version, err := strconv.ParseInt(sVersion, 10, 64)
+	if err != nil {
+		err = errors.New(fmt.Sprintf("version:%v 参数错误", sVersion))
+		return
+	}
+
+	sScore, _ := c.GetQuery("score")
+	score, err = strconv.ParseFloat(sScore, 64)
+	if err != nil {
+		err = errors.New(fmt.Sprintf("score:%v 参数错误", sScore))
+		return
+	}
+
 	// 获取用户id
 	if value, ok := c.Get("user_id"); ok {
 		uid, _ = value.(int)
 	}
 
-	videoInfos, err = v.VideoService.GetPopularVideos(uint(uid))
+	videoInfos, nextScore, nextVersion, err = v.VideoService.GetPopularVideos(uint(uid), int(version), score)
 	if err != nil {
 		return
 	}
@@ -105,8 +127,10 @@ func (v VideoController) GetPopularVideos(c *gin.Context) {
 	c.JSON(http.StatusOK, &base.ResponseWithData{
 		Code: base.SuccessCode,
 		Msg:  "ok",
-		Data: VideoRespWithoutTime{
+		Data: PopularVideoResp{
 			VideoInfo: videoInfos,
+			Score:     nextScore,
+			Version:   nextVersion,
 		},
 	})
 }
