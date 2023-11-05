@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"strconv"
 	"utopia-back/http/controller/base"
+	"utopia-back/model"
 	"utopia-back/pkg/logger"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
@@ -19,6 +20,11 @@ type CommentController struct {
 type CommentReq struct {
 	VideoId uint   `json:"video_id"`
 	Content string `json:"content"`
+}
+
+type CommentListResp struct {
+	CommentInfo []*model.CommentInfo `json:"comment_info"`
+	NextTime    int                  `json:"next_time"`
 }
 
 // Comment 点赞/取消点赞
@@ -64,7 +70,7 @@ func (l *CommentController) Comment(c *gin.Context) {
 	c.JSON(http.StatusOK, base.SuccessResponse)
 }
 
-// CommentList 点赞/取消点赞
+// CommentList 评论列表
 func (l *CommentController) CommentList(c *gin.Context) {
 	var err error
 
@@ -79,6 +85,13 @@ func (l *CommentController) CommentList(c *gin.Context) {
 		}
 	}()
 
+	sLastTime, _ := c.GetQuery("last_time")
+	lastTime, err := strconv.ParseInt(sLastTime, 10, 64)
+	if err != nil {
+		err = errors.New(fmt.Sprintf("last_time:%v 参数错误", sLastTime))
+		return
+	}
+
 	// 参数校验
 	sVideoId, _ := c.GetQuery("video_id")
 	videoId, err := strconv.ParseInt(sVideoId, 10, 64)
@@ -87,7 +100,7 @@ func (l *CommentController) CommentList(c *gin.Context) {
 		return
 	}
 
-	list, err := l.CommentService.CommentList(uint(videoId))
+	list, nextTime, err := l.CommentService.CommentList(uint(videoId), uint(lastTime))
 	if err != nil {
 		return
 	}
@@ -95,6 +108,9 @@ func (l *CommentController) CommentList(c *gin.Context) {
 	c.JSON(http.StatusOK, base.ResponseWithData{
 		Code: base.SuccessCode,
 		Msg:  "ok",
-		Data: list,
+		Data: CommentListResp{
+			list,
+			nextTime,
+		},
 	})
 }

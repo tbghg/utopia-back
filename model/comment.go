@@ -12,7 +12,8 @@ type Comment struct {
 }
 
 type CommentInfo struct {
-	Content  string `json:"content"`
-	Nickname string `json:"nickname"`
-	Avatar   string `json:"avatar"`
+	UpdatedAt time.Time `json:"-"`
+	Content   string    `json:"content"`
+	Nickname  string    `json:"nickname"`
+	Avatar    string    `json:"avatar"`
 }
