@@ -18,6 +18,7 @@ type CenterControllerV1 struct {
 	FollowCtrl   *v1.FollowController
 	LikeCtrl     *v1.LikeController
 	VideoCtrl    *v1.VideoController
+	CommentCtrl  *v1.CommentController
 }
 
 type CenterControllerV2 struct {
@@ -58,6 +59,9 @@ func NewCenterControllerV1(dal *implement.CenterDal) *CenterControllerV1 {
 			FavoriteDal: dal.FavoriteDal,
 		},
 	}
+	commentCtrl := &v1.CommentController{
+		CommentService: v12.CommentService{CommentDal: dal.CommentDal},
+	}
 
 	return &CenterControllerV1{
 		TestUserCtrl: testUserCtrl,
@@ -67,6 +71,7 @@ func NewCenterControllerV1(dal *implement.CenterDal) *CenterControllerV1 {
 		FollowCtrl:   followCtrl,
 		LikeCtrl:     likeCtrl,
 		VideoCtrl:    videoCtrl,
+		CommentCtrl:  commentCtrl,
 	}
 }
 

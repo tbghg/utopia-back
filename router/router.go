@@ -48,6 +48,13 @@ func Router(r *gin.Engine) *gin.Engine {
 			interact.GET("/follow/list", ctrlV1.FollowCtrl.FollowList) // 获取关注列表
 		}
 
+		// 评论模块
+		comment := v1ApiGroup.Group("/interact")
+		{
+			comment.POST("/comment", middleware.JwtMiddleware, ctrlV1.CommentCtrl.Comment)
+			comment.GET("/comment/list", ctrlV1.CommentCtrl.CommentList)
+		}
+
 		// 存储模块
 		storageGroup := v1ApiGroup.Group("/upload")
 		{

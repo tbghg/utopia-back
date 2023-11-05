@@ -29,7 +29,7 @@ func (l *LikeController) Like(c *gin.Context) {
 	// 请求处理失败，返回错误信息
 	defer func() {
 		if err != nil {
-			c.JSON(http.StatusOK, &base.ResponseWithData{
+			c.JSON(http.StatusOK, &base.ResponseWithoutData{
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})

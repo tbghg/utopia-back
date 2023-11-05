@@ -22,6 +22,7 @@ type CenterDal struct {
 	LikeDal     *LikeDal
 	FollowDal   *FollowDal
 	TestUserDal *TestUserDal
+	CommentDal  *CommentDal
 }
 
 func Init() error {
@@ -40,7 +41,7 @@ func Init() error {
 
 	// 连接数据库
 	db, err := gorm.Open(mysql.Open(cfg.FormatDSN()), &gorm.Config{
-		Logger: logger.NewGormLogger(logger.Logger, gormLogger.Warn),
+		Logger: logger.NewGormLogger(logger.Logger, gormLogger.Info),
 	})
 	if err != nil {
 		return err
@@ -93,6 +94,7 @@ func InitTable() {
 	_ = myDb.AutoMigrate(&model.Favorite{})
 	_ = myDb.AutoMigrate(&model.Follow{})
 	_ = myDb.AutoMigrate(&model.LikeCount{})
+	_ = myDb.AutoMigrate(&model.Comment{})
 }
 
 func NewCenterDal() *CenterDal {
@@ -113,6 +115,9 @@ func NewCenterDal() *CenterDal {
 			Db: myDb,
 		},
 		TestUserDal: &TestUserDal{
+			Db: myDb,
+		},
+		CommentDal: &CommentDal{
 			Db: myDb,
 		},
 	}
