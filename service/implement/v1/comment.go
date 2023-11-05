@@ -6,7 +6,7 @@ import (
 	abstract2 "utopia-back/service/abstract"
 )
 
-const commentListLimitNum = 2
+const commentListLimitNum = 20
 
 type CommentService struct {
 	CommentDal abstract.CommentDal
