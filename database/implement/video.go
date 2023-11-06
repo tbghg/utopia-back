@@ -12,6 +12,16 @@ type VideoDal struct {
 	Db *gorm.DB
 }
 
+func (v *VideoDal) GetBatchUploadVideos(lastTime uint, uid []uint, limitNum int) (videos []*model.Video, err error) {
+	res := v.Db.Model(model.Video{}).
+		Where("created_at > FROM_UNIXTIME(? / 1000) + INTERVAL (? % 1000) MICROSECOND AND author_id IN ?", lastTime, lastTime, uid).
+		Order("created_at").Limit(limitNum).Find(&videos)
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	return
+}
+
 func (v *VideoDal) UpdateCover(id uint, url string) error {
 	res := v.Db.Model(&model.Video{ID: id}).Update("cover_url", url)
 	if res.Error != nil {

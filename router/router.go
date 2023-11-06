@@ -65,9 +65,10 @@ func Router(r *gin.Engine) *gin.Engine {
 		// 视频模块
 		videoGroup := v1ApiGroup.Group("/video")
 		{
+			videoGroup.GET("/feed", middleware.JwtMiddleware, ctrlV1.VideoCtrl.GetRecommendVideos)
+
 			videoGroup.GET("/category", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.GetCategoryVideos)
 			videoGroup.GET("/popular", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.GetPopularVideos)
-			videoGroup.GET("/recommend", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.GetRecommendVideos)
 			videoGroup.GET("/favorite", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.GetFavoriteVideos)
 			videoGroup.GET("/upload", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.GetUploadVideos)
 			videoGroup.GET("/search", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.SearchVideos)

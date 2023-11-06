@@ -67,9 +67,23 @@ func (v VideoService) GetPopularVideos(uid uint, version int, score float64) (vi
 	return info, nextScore, nextVersion, err
 }
 
-func (v VideoService) GetRecommendVideos(uid uint, lastTime uint) ([]*model.VideoInfo, int, error) {
-	//TODO implement me
-	panic("implement me")
+func (v VideoService) GetRecommendVideos(uid uint, lastTime uint) (videoInfos []*model.VideoInfo, nextTime int, err error) {
+	var followIds []uint
+	followIds, err = v.FollowDal.GetFollowIdList(uid)
+	if err != nil {
+		return nil, -1, err
+	}
+
+	uploadVideos, err := v.VideoDal.GetBatchUploadVideos(lastTime, followIds, recommendVideosLimit)
+	if err != nil || len(uploadVideos) == 0 {
+		return nil, -1, err
+	}
+
+	videoInfos, nextTime, err = v.getVideoInfo(uid, uploadVideos)
+	if err != nil {
+		return nil, -1, err
+	}
+	return
 }
 
 func (v VideoService) GetFavoriteVideos(uid uint, targetUid uint, lastTime uint) (videoInfos []*model.VideoInfo, nextTime int, err error) {

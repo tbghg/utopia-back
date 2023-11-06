@@ -141,6 +141,47 @@ func (v VideoController) GetPopularVideos(c *gin.Context) {
 
 // GetRecommendVideos 获取推荐视频
 func (v VideoController) GetRecommendVideos(c *gin.Context) {
+	var (
+		err        error
+		videoInfos []*model.VideoInfo
+		nextTime   int
+		uid        int
+	)
+	// 请求处理失败，返回错误信息
+	defer func() {
+		if err != nil {
+			c.JSON(http.StatusOK, &base.ResponseWithData{
+				Code: base.ErrorCode,
+				Msg:  err.Error(),
+			})
+			logger.Logger.Error(fmt.Sprintf("GetRecommendVideos err:%+v", err))
+		}
+	}()
+
+	sLastTime, _ := c.GetQuery("last_time")
+	lastTime, err := strconv.ParseInt(sLastTime, 10, 64)
+	if err != nil {
+		err = errors.New(fmt.Sprintf("last_time:%v 参数错误", sLastTime))
+		return
+	}
+	// 获取用户id
+	if value, ok := c.Get("user_id"); ok {
+		uid, _ = value.(int)
+	}
+
+	videoInfos, nextTime, err = v.VideoService.GetRecommendVideos(uint(uid), uint(lastTime))
+	if err != nil {
+		return
+	}
+
+	c.JSON(http.StatusOK, &base.ResponseWithData{
+		Code: base.SuccessCode,
+		Msg:  "ok",
+		Data: VideoResp{
+			VideoInfo: videoInfos,
+			NextTime:  nextTime,
+		},
+	})
 	return
 }
 
