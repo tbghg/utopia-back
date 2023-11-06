@@ -9,6 +9,7 @@ import (
 	"strconv"
 	"utopia-back/config"
 	"utopia-back/http/controller/base"
+	"utopia-back/model"
 	"utopia-back/pkg/logger"
 	utils "utopia-back/pkg/util"
 	"utopia-back/service/abstract"
@@ -23,13 +24,16 @@ type uploadTokenData struct {
 }
 
 type uploadCallbackReq struct {
-	Key         string `json:"key" validate:"required"`
-	FileType    string `json:"file_type" validate:"required"`
+	Key         string `json:"key"`
+	FileType    string `json:"file_type"`
 	Uid         string `json:"uid"` // todo 可更改为JWT-Token，增强安全性
 	VideoTypeId string `json:"video_type_id"`
 	CoverUrl    string `json:"cover_url"`
 	Describe    string `json:"describe"`
 	Title       string `json:"title"`
+
+	InputKey string               `json:"inputKey"`
+	Item     []model.CallbackItem `json:"item"`
 }
 
 type callbackData struct {
@@ -37,8 +41,10 @@ type callbackData struct {
 }
 
 const (
-	callbackCover  = "COVER"  // 封面
-	callbackAvatar = "AVATAR" // 头像
+	callbackCover  = "COVER"           // 封面
+	callbackAvatar = "AVATAR"          // 头像
+	videoWithCover = "VIDEO-WITHCOVER" // 头像
+	video          = "VIDEO"           // 头像
 )
 
 func (v *StorageController) UploadToken(c *gin.Context) {
@@ -82,6 +88,14 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 	if err = c.BindJSON(&r); err != nil {
 		return
 	}
+
+	if r.InputKey != "null" {
+		err = v.StorageService.PreVideoCallback(r.InputKey, r.Item)
+		if err != nil {
+			return
+		}
+	}
+
 	// 参数校验
 	uid, videoTypeId, err = callbackReqValidate(r)
 	if err != nil {
@@ -105,7 +119,8 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 		})
 		return
 	}
-	err = v.StorageService.UploadVideoCallback(uid, url, r.CoverUrl, r.Describe, r.Title, videoTypeId)
+	isWithCover := r.FileType == videoWithCover
+	err = v.StorageService.UploadVideoCallback(uid, url, r.CoverUrl, r.Describe, r.Title, videoTypeId, isWithCover, r.Key)
 	if err != nil {
 		return
 	}

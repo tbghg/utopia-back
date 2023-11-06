@@ -60,3 +60,9 @@ type VideoCount struct {
 	Count   int
 	Score   float64
 }
+
+type CallbackItem struct {
+	Code int    `json:"code"`
+	Desc string `json:"desc"`
+	Key  string `json:"key"`
+}

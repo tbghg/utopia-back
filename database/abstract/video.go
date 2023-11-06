@@ -17,4 +17,6 @@ type VideoDal interface {
 	GetVideoInfoById(videoIds []uint) (videos []*model.Video, err error)
 	// SearchVideos 查找视频
 	SearchVideos(search string, limitNum int) (videos []*model.Video, err error)
+	// UpdateCover 更新视频封面
+	UpdateCover(id uint, url string) error
 }

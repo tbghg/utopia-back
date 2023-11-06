@@ -12,6 +12,14 @@ type VideoDal struct {
 	Db *gorm.DB
 }
 
+func (v *VideoDal) UpdateCover(id uint, url string) error {
+	res := v.Db.Model(&model.Video{ID: id}).Update("cover_url", url)
+	if res.Error != nil {
+		return res.Error
+	}
+	return nil
+}
+
 func (v *VideoDal) SearchVideos(search string, limitNum int) (videos []*model.Video, err error) {
 	res := v.Db.Model(model.Video{}).
 		Where("`title` LIKE ?", search+"%").

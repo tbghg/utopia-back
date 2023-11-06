@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/redis/go-redis/v9"
 	"strconv"
+	"time"
 	"utopia-back/job/common"
 	"utopia-back/pkg/logger"
 )
@@ -91,4 +92,24 @@ func GetPopularVideo(version int, score float64, count int64) (videoIds []uint, 
 
 	nextScore = result[len(result)-1].Score
 	return videoIds, nextScore, nextVersion, true
+}
+
+func VideoPersistentKey(inputKey string) string {
+	return fmt.Sprintf("video:persistent:%s", inputKey)
+}
+
+func SetVideoPersistent(inputKey string, vid uint) {
+	err := RDB.Set(Ctx, VideoPersistentKey(inputKey), vid, 30*time.Minute).Err()
+	if err != nil {
+		logger.Logger.Error(fmt.Sprintf("SetVideoPersistent RDB.Set err:%+v", err))
+	}
+}
+
+func GetVideoPersistent(inputKey string) uint {
+	result := RDB.Get(Ctx, VideoPersistentKey(inputKey))
+	if result.Err() != nil {
+		logger.Logger.Error(fmt.Sprintf("SetVideoPersistent RDB.Set err:%+v", result.Err()))
+	}
+	vid, _ := strconv.Atoi(result.Val())
+	return uint(vid)
 }

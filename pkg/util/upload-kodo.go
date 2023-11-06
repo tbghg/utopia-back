@@ -2,6 +2,7 @@ package utils
 
 import (
 	"context"
+	"encoding/base64"
 	"github.com/qiniu/go-sdk/v7/auth/qbox"
 	"github.com/qiniu/go-sdk/v7/storage"
 	"utopia-back/config"
@@ -11,6 +12,7 @@ const (
 	callbackPath     = "/api/v1/upload/callback"
 	callbackBody     = `{"key":"$(key)","file_type":"$(x:file_type)","uid":"$(x:uid)","cover_url":"$(x:cover_url)","describe":"$(x:describe)","title":"$(x:title)","video_type_id":"$(x:video_type_id)"}`
 	callbackBodyType = "application/json"
+	persistentOps    = "vframe/jpg/offset/7/w/480/h/360"
 )
 
 func buildCfg() (cfg storage.Config) {
@@ -30,11 +32,18 @@ func buildCfg() (cfg storage.Config) {
 func GetCallbackToken() (upToken string) {
 	bucket := config.V.GetString("qiniu.bucket")
 	callbackUrl := config.V.GetString("server.ip") + config.V.GetString("server.port") + callbackPath
+
+	saveJpgEntry := base64.URLEncoding.EncodeToString([]byte(bucket + ":" + GetRandomString() + ".jpg"))
+	vframeJpgFop := "vframe/jpg/offset/1|saveas/" + saveJpgEntry
+
 	putPolicy := &storage.PutPolicy{
 		Scope:            bucket,
 		CallbackURL:      callbackUrl,
 		CallbackBody:     callbackBody,
 		CallbackBodyType: callbackBodyType,
+
+		PersistentOps:       vframeJpgFop,
+		PersistentNotifyURL: callbackUrl,
 	}
 	return putPolicy.UploadToken(GetMac())
 }
