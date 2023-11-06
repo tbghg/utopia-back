@@ -71,6 +71,7 @@ func Router(r *gin.Engine) *gin.Engine {
 			videoGroup.GET("/favorite", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.GetFavoriteVideos)
 			videoGroup.GET("/upload", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.GetUploadVideos)
 			videoGroup.GET("/search", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.SearchVideos)
+			videoGroup.GET("/single", middleware.JwtWithoutAbortMiddleware, ctrlV1.VideoCtrl.GetSingleVideo)
 		}
 	}
 

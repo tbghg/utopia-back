@@ -28,6 +28,18 @@ const (
 	searchVideosLimit    = 20
 )
 
+func (v VideoService) GetSingleVideo(uid uint, vid uint) (*model.VideoInfo, error) {
+	videos, err := v.VideoDal.GetVideoInfoById([]uint{vid})
+	if err != nil || len(videos) == 0 {
+		return nil, err
+	}
+	info, _, err := v.getVideoInfo(uid, videos)
+	if err != nil || len(info) == 0 {
+		return nil, err
+	}
+	return info[0], nil
+}
+
 func (v VideoService) GetPopularVideos(uid uint, version int, score float64) (videoInfo []*model.VideoInfo, nextScore float64, nextVersion int, err error) {
 	var (
 		ids []uint

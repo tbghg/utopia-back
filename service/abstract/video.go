@@ -15,4 +15,6 @@ type VideoService interface {
 	GetUploadVideos(uid uint, targetUid uint, lastTime uint) ([]*model.VideoInfo, int, error)
 	// SearchVideos 搜索
 	SearchVideos(uid uint, search string) ([]*model.VideoInfo, error)
+	// GetSingleVideo 获取单个视频
+	GetSingleVideo(uid uint, vid uint) (*model.VideoInfo, error)
 }

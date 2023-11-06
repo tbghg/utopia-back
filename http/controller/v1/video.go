@@ -21,6 +21,10 @@ type VideoResp struct {
 	NextTime  int                `json:"next_time"`
 }
 
+type SingleVideo struct {
+	VideoInfo *model.VideoInfo `json:"video_info"`
+}
+
 type VideoRespWithoutTime struct {
 	VideoInfo []*model.VideoInfo `json:"video_info"`
 }
@@ -168,7 +172,7 @@ func (v VideoController) GetUploadVideos(c *gin.Context) {
 	sTargetUserId, _ := c.GetQuery("user_id")
 	targetUid, err := strconv.ParseInt(sTargetUserId, 10, 64)
 	if err != nil {
-		err = errors.New(fmt.Sprintf("user_id:%v 参数错误", sLastTime))
+		err = errors.New(fmt.Sprintf("user_id:%v 参数错误", sTargetUserId))
 		return
 	}
 	// 获取用户id
@@ -187,6 +191,49 @@ func (v VideoController) GetUploadVideos(c *gin.Context) {
 		Data: VideoResp{
 			VideoInfo: videoInfos,
 			NextTime:  nextTime,
+		},
+	})
+}
+
+// GetSingleVideo 获取上传的视频
+func (v VideoController) GetSingleVideo(c *gin.Context) {
+	var (
+		err       error
+		videoInfo *model.VideoInfo
+		uid       int
+	)
+	// 请求处理失败，返回错误信息
+	defer func() {
+		if err != nil {
+			c.JSON(http.StatusOK, &base.ResponseWithData{
+				Code: base.ErrorCode,
+				Msg:  err.Error(),
+			})
+			logger.Logger.Error(fmt.Sprintf("GetSingleVideos err:%+v", err))
+		}
+	}()
+
+	sVideoId, _ := c.GetQuery("video_id")
+	vid, err := strconv.ParseInt(sVideoId, 10, 64)
+	if err != nil {
+		err = errors.New(fmt.Sprintf("video_id:%v 参数错误", vid))
+		return
+	}
+	// 获取用户id
+	if value, ok := c.Get("user_id"); ok {
+		uid, _ = value.(int)
+	}
+
+	videoInfo, err = v.VideoService.GetSingleVideo(uint(uid), uint(vid))
+	if err != nil {
+		return
+	}
+
+	c.JSON(http.StatusOK, &base.ResponseWithData{
+		Code: base.SuccessCode,
+		Msg:  "ok",
+		Data: SingleVideo{
+			VideoInfo: videoInfo,
 		},
 	})
 }
