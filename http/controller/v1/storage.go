@@ -33,7 +33,7 @@ type uploadCallbackReq struct {
 	Title       string `json:"title"`
 
 	InputKey string               `json:"inputKey"`
-	Item     []model.CallbackItem `json:"item"`
+	Items    []model.CallbackItem `json:"items"`
 }
 
 type callbackData struct {
@@ -93,7 +93,7 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 	logger.Logger.Info(fmt.Sprintf("UploadCallback r:%+v r.Input:%s", r, r.InputKey))
 
 	if r.InputKey != "" {
-		err = v.StorageService.PreVideoCallback(r.InputKey, r.Item)
+		err = v.StorageService.PreVideoCallback(r.InputKey, r.Items)
 		if err != nil {
 			return
 		}
