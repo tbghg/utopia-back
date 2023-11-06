@@ -99,16 +99,16 @@ func VideoPersistentKey(inputKey string) string {
 }
 
 func SetVideoPersistent(inputKey string, vid uint) {
-	err := RDB.Set(Ctx, VideoPersistentKey(inputKey), vid, 30*time.Minute).Err()
-	if err != nil {
-		logger.Logger.Error(fmt.Sprintf("SetVideoPersistent RDB.Set err:%+v", err))
+	res := RDB.Set(Ctx, VideoPersistentKey(inputKey), vid, 30*time.Minute)
+	if res.Err() != nil {
+		logger.Logger.Error(fmt.Sprintf("SetVideoPersistent RDB.Set err:%+v", res.Err()))
 	}
 }
 
 func GetVideoPersistent(inputKey string) uint {
 	result := RDB.Get(Ctx, VideoPersistentKey(inputKey))
 	if result.Err() != nil {
-		logger.Logger.Error(fmt.Sprintf("SetVideoPersistent RDB.Set err:%+v", result.Err()))
+		logger.Logger.Error(fmt.Sprintf("GetVideoPersistent RDB.Set err:%+v", result.Err()))
 	}
 	vid, _ := strconv.Atoi(result.Val())
 	return uint(vid)

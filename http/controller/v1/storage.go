@@ -72,8 +72,8 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 				Code: base.ErrorCode,
 				Msg:  err.Error(),
 			})
+			logger.Logger.Error(fmt.Sprintf("UploadCallback err:%+v", err))
 		}
-		logger.Logger.Error(fmt.Sprintf("UploadCallback err:%+v", err))
 	}()
 
 	// 校验是否为七牛云调用
@@ -89,7 +89,10 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 		return
 	}
 
-	if r.InputKey != "null" {
+	// todo 临时打印日志
+	logger.Logger.Info(fmt.Sprintf("UploadCallback r:%+v r.Input:%s", r, r.InputKey))
+
+	if r.InputKey != "" {
 		err = v.StorageService.PreVideoCallback(r.InputKey, r.Item)
 		if err != nil {
 			return
