@@ -89,7 +89,6 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 		return
 	}
 
-	// todo 临时打印日志
 	logger.Logger.Info(fmt.Sprintf("UploadCallback r:%+v r.Input:%s", r, r.InputKey))
 
 	if r.InputKey != "" {
@@ -97,6 +96,10 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 		if err != nil {
 			return
 		}
+		c.JSON(http.StatusOK, &base.ResponseWithoutData{
+			Code: base.SuccessCode,
+			Msg:  "ok",
+		})
 	}
 
 	// 参数校验
