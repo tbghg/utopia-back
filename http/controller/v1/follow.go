@@ -53,6 +53,11 @@ func (f *FollowController) Follow(c *gin.Context) {
 	if err = utils.Validate.Struct(r); err != nil {
 		return
 	}
+
+	if userId == r.ToUserId {
+		c.JSON(http.StatusOK, base.SuccessResponse)
+		return
+	}
 	// 判断操作类型
 	switch r.ActionType {
 	case 1:
