@@ -25,7 +25,7 @@ func (v *StorageService) PreVideoCallback(inputKey string, item []model.Callback
 		coverUrl := config.V.GetString("qiniu.kodoApi") + "/" + value.Key
 		err := v.VideoDal.UpdateCover(vid, coverUrl)
 		if err != nil {
-			logger.Logger.Error(fmt.Sprintf("PreVideoCallback v.VideoDal.UpdateCover err:&+v", err))
+			logger.Logger.Error(fmt.Sprintf("PreVideoCallback v.VideoDal.UpdateCover err:%+v", err))
 		}
 	}
 	return nil

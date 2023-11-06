@@ -43,8 +43,8 @@ type callbackData struct {
 const (
 	callbackCover  = "COVER"           // 封面
 	callbackAvatar = "AVATAR"          // 头像
-	videoWithCover = "VIDEO-WITHCOVER" // 头像
-	video          = "VIDEO"           // 头像
+	videoWithCover = "VIDEO-WITHCOVER" // 视频带封面
+	video          = "VIDEO"           // 视频不带封面
 )
 
 func (v *StorageController) UploadToken(c *gin.Context) {
