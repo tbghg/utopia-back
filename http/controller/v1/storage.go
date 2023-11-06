@@ -100,6 +100,7 @@ func (v *StorageController) UploadCallback(c *gin.Context) {
 			Code: base.SuccessCode,
 			Msg:  "ok",
 		})
+		return
 	}
 
 	// 参数校验
