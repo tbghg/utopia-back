@@ -42,6 +42,7 @@ type VideoInfo struct {
 
 	LikeCount     int `json:"like_count"`     // 点赞数
 	FavoriteCount int `json:"favorite_count"` // 点赞数
+	CommentNum    int `json:"comment_num"`    // 评论数
 }
 
 // AuthorInfo 作者信息

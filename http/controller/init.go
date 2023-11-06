@@ -57,6 +57,7 @@ func NewCenterControllerV1(dal *implement.CenterDal) *CenterControllerV1 {
 			FollowDal:   dal.FollowDal,
 			LikeDal:     dal.LikeDal,
 			FavoriteDal: dal.FavoriteDal,
+			CommentDal:  dal.CommentDal,
 		},
 	}
 	commentCtrl := &v1.CommentController{

@@ -16,6 +16,7 @@ type VideoService struct {
 	FollowDal   abstract.FollowDal
 	FavoriteDal abstract.FavoriteDal
 	LikeDal     abstract.LikeDal
+	CommentDal  abstract.CommentDal
 }
 
 const (
@@ -171,6 +172,13 @@ func (v VideoService) getVideoInfo(userId uint, videos []*model.Video) ([]*model
 					vid, err))
 			}
 			videoInfos[i].FavoriteCount = int(favoriteCount)
+
+			commentNum, err := v.CommentDal.CommentNum(vid)
+			if err != nil {
+				logger.Logger.Error(fmt.Sprintf("getVideoInfo v.CommentDal.CommentNum vid:%v err:%+v",
+					vid, err))
+			}
+			videoInfos[i].CommentNum = commentNum
 
 			if userId != 0 {
 				// 是否收藏

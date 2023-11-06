@@ -9,6 +9,16 @@ import (
 
 type CommentDal struct{ Db *gorm.DB }
 
+func (c CommentDal) CommentNum(videoId uint) (commentNum int, err error) {
+	var count int64
+	res := c.Db.Model(model.Comment{}).Where("video_id = ?", videoId).Count(&count)
+	if !errors.Is(res.Error, gorm.ErrRecordNotFound) {
+		err = res.Error
+	}
+	commentNum = int(count)
+	return
+}
+
 func (c CommentDal) Comment(userId uint, videoId uint, content string) (err error) {
 	comment := model.Comment{
 		VideoID: videoId,
