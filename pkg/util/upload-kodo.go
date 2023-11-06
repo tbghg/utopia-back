@@ -12,7 +12,6 @@ const (
 	callbackPath     = "/api/v1/upload/callback"
 	callbackBody     = `{"key":"$(key)","file_type":"$(x:file_type)","uid":"$(x:uid)","cover_url":"$(x:cover_url)","describe":"$(x:describe)","title":"$(x:title)","video_type_id":"$(x:video_type_id)"}`
 	callbackBodyType = "application/json"
-	persistentOps    = "vframe/jpg/offset/7/w/480/h/360"
 )
 
 func buildCfg() (cfg storage.Config) {
@@ -33,7 +32,7 @@ func GetCallbackToken() (upToken string) {
 	bucket := config.V.GetString("qiniu.bucket")
 	callbackUrl := config.V.GetString("server.ip") + config.V.GetString("server.port") + callbackPath
 
-	saveJpgEntry := base64.URLEncoding.EncodeToString([]byte(bucket + ":" + GetRandomString() + ".jpg"))
+	saveJpgEntry := base64.URLEncoding.EncodeToString([]byte(bucket + ":${etag}.jpg"))
 	vframeJpgFop := "vframe/jpg/offset/1|saveas/" + saveJpgEntry
 
 	putPolicy := &storage.PutPolicy{
