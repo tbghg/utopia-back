@@ -1,0 +1,42 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+'autonumber
+
+title 七牛云SDK使用
+
+participant 用户
+participant 客户端
+participant 服务端
+participant 七牛云
+
+用户 -> 客户端 : 上传视频/头像/封面
+客户端 -> 服务端:请求上传凭证
+服务端 -> 七牛云:请求上传凭证\n携带AK/SK
+七牛云 -> 服务端:携带回调、自定义参数、数据处理的凭证
+服务端 -> 客户端:上传凭证
+客户端 -> 七牛云:上传视频/头像/封面，携带自定义参数
+七牛云 -> 服务端:文件上传成功回调
+opt 文件类型
+    opt 视频
+    服务端 -> 服务端:存入videos表
+    end
+    opt 头像
+    服务端 -> 服务端:修改user表
+    end
+    opt 封面
+    服务端 -> 服务端:不做处理
+    end
+end
+
+服务端 -> 七牛云: 回调结果
+七牛云 -> 客户端: 服务端处理结果
+客户端 -> 用户: 处理结果
+
+opt 视频类型
+七牛云 -> 七牛云: 截取第一帧并上传
+七牛云 -> 服务端: 回调异步通知预转持久化完成
+服务端 -> 服务端: 修改videos表
+end
+
+@enduml
