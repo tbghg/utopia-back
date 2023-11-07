@@ -41,23 +41,23 @@ func (v *videoJob) updatePopularVideos() {
 		nums = (nums + 1) % 2 // count值为0/1
 		common.PopularVideoVersion.Store(nums + 1)
 
-		videoCounts, err := v.videoServer.VideoDal.GetPopularVideos(popularVideosNum)
+		videoIds, err := v.videoServer.VideoDal.GetPopularVideos(popularVideosNum)
 		if err != nil {
-			logger.Logger.Error(fmt.Sprintf("updatePopularVideos v.videoServer.VideoDal.GetPopularVideos err:%+v", videoCounts))
+			logger.Logger.Error(fmt.Sprintf("updatePopularVideos v.videoServer.VideoDal.GetPopularVideos err:%+v", videoIds))
 			// 一分钟后重试
 			<-time.After(5 * time.Minute)
 			continue
 		}
-		videoPopularItem := make([]*cache.VideoPopularItem, len(videoCounts))
-		for i := range videoCounts {
-			sScore := fmt.Sprintf("%d.%d", videoCounts[i].Count, videoCounts[i].VideoID)
+		popularItem := make([]*cache.VideoPopularItem, len(videoIds))
+		for i := range videoIds {
+			sScore := fmt.Sprintf("%d.%d", videoIds[i].Count, videoIds[i].VideoID)
 
-			videoPopularItem[i] = &cache.VideoPopularItem{Vid: videoCounts[i].VideoID}
-			videoPopularItem[i].Score, _ = strconv.ParseFloat(sScore, 64)
+			popularItem[i] = &cache.VideoPopularItem{Vid: videoIds[i].VideoID}
+			popularItem[i].Score, _ = strconv.ParseFloat(sScore, 64)
 		}
 
 		key := cache.PopularVideoKey(common.GetPopularVideoVersion())
-		cache.BuildPopularVideo(key, videoPopularItem)
+		cache.BuildPopularVideo(key, popularItem)
 
 		<-ticker.C
 	}
