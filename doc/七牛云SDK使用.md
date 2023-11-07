@@ -4,7 +4,7 @@
 
 ## 时序图
 
-![七牛云SDK使用.png](./poml/七牛云SDK使用.png)
+![七牛云SDK使用.png](./puml/七牛云SDK使用.png)
 
 ## 设计思路
 
